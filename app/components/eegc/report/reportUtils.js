@@ -74,7 +74,17 @@ export async function downloadPDF(history, contributionAnalysis) {
 
     const htmlContent = `
     <div id="pdf-content" style="padding: 40px; font-family: Arial, sans-serif; color: #333; line-height: 1.5; width: 515pt; background: white;">
-      <h1 style="color: #004085; border-bottom: 2px solid #004085; padding-bottom: 10px; margin-top: 0;">HKBU Learning Session Report</h1>
+      <style>
+        #pdf-content h1, #pdf-content h2, #pdf-content h3, #pdf-content h4, #pdf-content h5, #pdf-content h6 {
+          border: none !important;
+          margin-top: 15px;
+          margin-bottom: 10px;
+        }
+        #pdf-content hr {
+          display: none !important;
+        }
+      </style>
+      <h1 style="color: #004085; padding-bottom: 10px; margin-top: 0;">HKBU Learning Session Report</h1>
       
       <div class="meta" style="margin-bottom: 20px; color: #666; font-size: 12px;">
         <p style="margin: 5px 0;">Generated: ${now.toLocaleString()}</p>
@@ -83,7 +93,7 @@ export async function downloadPDF(history, contributionAnalysis) {
 
       <div class="section" style="page-break-inside: avoid;">
         <h2 style="color: #004085; font-size: 18px; margin-top: 30px; margin-bottom: 10px;">Your Contribution Analysis</h2>
-        <div class="analysis-content" style="background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #004085;">
+        <div class="analysis-content" style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
           ${analysisHtml}
         </div>
       </div>
