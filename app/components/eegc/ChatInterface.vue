@@ -1,11 +1,11 @@
 <template>
-  <div class="chat-interface flex-1 flex flex-col">
-    <div class="chat-messages flex-1 overflow-y-auto p-5 space-y-4">
-      <div class="w-full mx-auto flex flex-1 gap-4">
+    <div class="chat-interface flex-1 flex flex-col h-full">
+    <div class="flex-1 p-5 overflow-hidden">
+      <div class="w-full mx-auto flex gap-4" style="height: 80vh">
         <!-- Left: Chat messages + input -->
-        <div class="flex flex-col w-1/2" style="height: 70vh">
+        <div class="flex flex-col w-1/2 h-full">
           <!-- Chat history -->
-          <div ref="chatMessages" class="chat-messages flex-1 overflow-y-auto p-5 space-y-4">
+          <div ref="chatMessages" class="chat-messages flex-1 overflow-y-auto p-5 space-y-4 border rounded-t-lg bg-white">
             <div
               v-for="(msg, i) in activeChatHistory"
               :key="`${i}-${msg.content?.length || 0}`"
@@ -30,8 +30,8 @@
             </div>
           </div>
 
-          <!-- Chat input -->
-          <div class="mt-3 flex gap-2 items-start relative">
+                    <!-- Chat input -->
+          <div class="mt-0 flex gap-2 items-start relative bg-gray-50 p-3 border border-t-0 rounded-b-lg">
             <div class="flex-1 flex flex-col-reverse">
               <textarea
                 v-model="localUserMessage"
@@ -62,8 +62,8 @@
           </div>
         </div>
 
-        <!-- Right: Draft area -->
-        <div class="flex-1 space-y-4 overflow-y-auto h-full">
+                <!-- Right: Draft area -->
+        <div class="flex-1 space-y-4 overflow-y-auto h-full pr-2">
           <!-- Original Draft -->
           <div
             class="bg-gray-100 border border-gray-300 text-gray-800 rounded-md p-4 mb-4"
