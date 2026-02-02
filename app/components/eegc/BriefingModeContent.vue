@@ -21,9 +21,9 @@
                 class="w-full border rounded-lg p-2 text-sm focus:ring focus:ring-indigo-300"
               >
                 <optgroup label="Available Models">
-                  <option value="gpt-5.2">GPT-5.2</option>
-                  <option value="gemini-3-flash">Gemini 3 Flash</option>
                   <option value="gpt-5.2-instant">GPT-5.2 Instant</option>
+                    <option value="gpt-5.2">GPT-5.2</option>
+                  <option value="gemini-3-flash">Gemini 3 Flash</option>
                 </optgroup>
               </select>
             </div>

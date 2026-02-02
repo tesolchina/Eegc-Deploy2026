@@ -297,6 +297,7 @@ const handleBeforeUnload = (e) => {
 onMounted(async () => {
   window.addEventListener('beforeunload', handleBeforeUnload)
   switchMode(currentMode.value)
+  connectAPI()
 })
 
 onBeforeUnmount(() => window.removeEventListener('beforeunload', handleBeforeUnload))

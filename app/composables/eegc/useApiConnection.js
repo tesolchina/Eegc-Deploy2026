@@ -1,21 +1,39 @@
+import Swal from 'sweetalert2'
+
 export function useApiConnection({ model, showNotification, talkToChatbot }) {
   const isConnected = ref(false)
   const isConnecting = ref(false)
 
   async function connectAPI() {
     isConnecting.value = true
+    isConnected.value = false
 
     try {
-      const reply = await talkToChatbot([
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Connection timed out')), 15000)
+      )
+
+      const connectionPromise = talkToChatbot([
         { role: 'system', content: 'connection test, return 1' },
         { role: 'user', content: 'Hello!' },
       ])
-      isConnected.value = reply?.trim().length > 0
-      showNotification(
-        isConnected.value ? '✅ Connected!' : '⚠️ No valid reply',
-        isConnected.value ? 'success' : 'error'
-      )
-    } catch {
+
+      const reply = await Promise.race([connectionPromise, timeoutPromise])
+
+      if (reply?.trim().length > 0) {
+        isConnected.value = true
+        showNotification('✅ Connected!', 'success')
+      } else {
+        throw new Error('No valid reply from chatbot')
+      }
+    } catch (error) {
+      isConnected.value = false
+      Swal.fire({
+        title: 'Connection Failed',
+        text: 'The chatbot is not responding. Please check your internet connection or try again later.',
+        icon: 'error',
+        confirmButtonColor: '#4f46e5',
+      })
       showNotification('❌ Connection failed', 'error')
     } finally {
       isConnecting.value = false
@@ -33,3 +51,4 @@ export function useApiConnection({ model, showNotification, talkToChatbot }) {
     clearAPI,
   }
 }
+
