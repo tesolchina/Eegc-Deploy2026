@@ -19,3 +19,20 @@ create table public.learning_reports (
     )
   )
 ) TABLESPACE pg_default;
+
+CREATE TABLE IF NOT EXISTS public.students (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  student_number_suffix integer NOT NULL,
+  name_prefix text,
+  section_number integer,
+  random_code text,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS public.teachers (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email text NOT NULL,
+  password text NOT NULL,
+  is_active boolean NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
