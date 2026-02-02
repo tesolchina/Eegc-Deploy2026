@@ -37,7 +37,7 @@ export function useReportGenerator({
   const makeReportHeader = (mode, body) =>
     `${
       mode === 'training' ? 'TRAINING' : 'FINAL'
-    } ASSESSMENT REPORT\n\n${body}\n\n(Do not mention scores.)`
+    } ASSESSMENT REPORT\n\n${body}\n\n(Do not mention scores. Also do not mention that the score is hidden. Do not mention "remove all scores and numerical references" or similar things.  You should process as if there were no score.)`
 
   async function generateAssessmentReport(mode = 'final') {
     isGeneratingAssessment.value = true
