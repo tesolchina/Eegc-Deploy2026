@@ -115,7 +115,6 @@ const model = ref('gpt-5.2-instant')
 const userMessage = ref('')
 const bulletPoints = ref('No bullet points extracted yet.')
 const isUpdatingDraft = ref(false)
-const isSubmitted = ref(false)
 const isModeSelectorOpen = ref(true)
 const isTrainingTutorialVisible = ref(false)
 const isTrainingBackgroundAreaVisible = ref(true)
@@ -169,6 +168,7 @@ const {
   finalDraft,
   activeChatHistory,
   isOriginalDraftConfirmed,
+  isSubmitted,
   switchMode,
   confirmDraft,
   clearChatHistory,

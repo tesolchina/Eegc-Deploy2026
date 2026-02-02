@@ -147,20 +147,20 @@
                   : 'Paste or write the original draft here...'
               "
               class="w-full border rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              :disabled="activeIsOriginalDraftConfirmed"
+              :disabled="isOriginalDraftConfirmed"
             />
 
             <button
-              @click="confirmModeSpecificDraft"
+              @click="$emit('confirmDraft')"
               class="w-full mt-2 px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="activeIsOriginalDraftConfirmed"
+              :disabled="isOriginalDraftConfirmed"
             >
               {{
                 currentMode === "assessment"
-                  ? activeIsOriginalDraftConfirmed
+                  ? isOriginalDraftConfirmed
                     ? "Essay Confirmed"
                     : "Confirm Your Essay"
-                  : activeIsOriginalDraftConfirmed
+                  : isOriginalDraftConfirmed
                   ? "Draft Confirmed (Training)"
                   : "Confirm Training Draft"
               }}
@@ -209,10 +209,7 @@
                     : 'Paste or write the improved draft here...'
                 "
                 class="w-full border rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-                :disabled="
-                  (currentMode === 'assessment' && !isOriginalDraftConfirmedAssessment) ||
-                  (currentMode === 'training' && !isOriginalDraftConfirmedTraining)
-                "
+                :disabled="!isOriginalDraftConfirmed"
               />
             </div>
 
@@ -225,8 +222,7 @@
               class="w-full mt-2 px-3 py-2 text-white rounded-lg text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               :class="currentMode === 'assessment' ? 'bg-green-600' : 'bg-blue-600'"
               :disabled="
-                (currentMode === 'assessment' && !isOriginalDraftConfirmedAssessment) ||
-                (currentMode === 'training' && !isOriginalDraftConfirmedTraining) ||
+                !isOriginalDraftConfirmed ||
                 isGeneratingAssessment ||
                 isSubmitted
               "
@@ -309,24 +305,6 @@ function selectTopic(topic) {
   emits("update:currentTopic", topic);
 }
 
-const isOriginalDraftConfirmedTraining = ref(true);
-const isOriginalDraftConfirmedAssessment = ref(false);
-
-const activeIsOriginalDraftConfirmed = computed(() =>
-  props.currentMode === "assessment"
-    ? isOriginalDraftConfirmedAssessment.value
-    : isOriginalDraftConfirmedTraining.value
-);
-
-async function confirmModeSpecificDraft() {
-  await emits("confirmDraft");
-  if (!props.isOriginalDraftConfirmed) return;
-  if (props.currentMode === "assessment") {
-    isOriginalDraftConfirmedAssessment.value = true;
-  } else {
-    isOriginalDraftConfirmedTraining.value = true;
-  }
-}
 
 const localUserMessage = ref(props.userMessage);
 const localOriginalDraft = ref(props.originalDraft);

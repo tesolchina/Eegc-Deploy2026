@@ -5,23 +5,27 @@ import { Sample_Essay } from './promptAndEssay'
 export function useModeManager({ isConnected }) {
   const currentMode = ref('briefing')
   
-  // Separate drafts by mode
+  // Separate state by mode
   const trainingOriginalDraft = ref('')
   const trainingFinalDraft = ref('')
+  const trainingIsSubmitted = ref(false)
+  const trainingIsOriginalDraftConfirmed = ref(true) // Training starts confirmed by default in current logic
+
   const assessmentOriginalDraft = ref('')
   const assessmentFinalDraft = ref('')
+  const assessmentIsSubmitted = ref(false)
+  const assessmentIsOriginalDraftConfirmed = ref(false)
   
-  // Active working drafts
+  // Active working state
   const originalDraft = ref('')
   const finalDraft = ref('')
+  const isSubmitted = ref(false)
+  const isOriginalDraftConfirmed = ref(false)
   
   // Chat histories per mode
   const trainingChatHistory = ref([])
   const assessmentChatHistory = ref([])
   const activeChatHistory = ref([])
-  
-  // Draft confirmation state
-  const isOriginalDraftConfirmed = ref(false)
 
   const makeChatHistoryEntry = (role, content) => ({
     role,
@@ -38,23 +42,20 @@ export function useModeManager({ isConnected }) {
       })
     }
 
-    // Save current mode's drafts
+    // Save current mode's state
     if (currentMode.value === 'training') {
       trainingOriginalDraft.value = originalDraft.value
       trainingFinalDraft.value = finalDraft.value
+      trainingIsSubmitted.value = isSubmitted.value
+      trainingIsOriginalDraftConfirmed.value = isOriginalDraftConfirmed.value
     } else if (currentMode.value === 'assessment') {
       assessmentOriginalDraft.value = originalDraft.value
       assessmentFinalDraft.value = finalDraft.value
+      assessmentIsSubmitted.value = isSubmitted.value
+      assessmentIsOriginalDraftConfirmed.value = isOriginalDraftConfirmed.value
     }
 
     currentMode.value = mode
-    
-    // Set draft confirmation state based on mode
-    if (mode === 'training') {
-      isOriginalDraftConfirmed.value = true
-    } else {
-      isOriginalDraftConfirmed.value = false
-    }
 
     const chatMap = {
       training: trainingChatHistory,
@@ -69,28 +70,42 @@ export function useModeManager({ isConnected }) {
         chatMap[mode].value.push(makeChatHistoryEntry('assistant', MODE_GREETINGS[mode]))
       }
 
-      // Load mode-specific drafts
+      // Load mode-specific state
       originalDraft.value =
         mode === 'training'
           ? trainingOriginalDraft.value || Sample_Essay
           : assessmentOriginalDraft.value || ''
-      finalDraft.value = 
-        mode === 'training' 
-          ? trainingFinalDraft.value 
+      finalDraft.value =
+        mode === 'training'
+          ? trainingFinalDraft.value
           : assessmentFinalDraft.value
+      
+      isSubmitted.value =
+        mode === 'training'
+          ? trainingIsSubmitted.value
+          : assessmentIsSubmitted.value
+      
+      isOriginalDraftConfirmed.value =
+        mode === 'training'
+          ? trainingIsOriginalDraftConfirmed.value
+          : assessmentIsOriginalDraftConfirmed.value
     } else {
       activeChatHistory.value = []
     }
   }
 
-  // Sync draft changes to their mode-specific refs
-  watch([originalDraft, finalDraft, currentMode], () => {
+  // Sync state changes to their mode-specific refs
+  watch([originalDraft, finalDraft, isSubmitted, isOriginalDraftConfirmed, currentMode], () => {
     if (currentMode.value === 'training') {
       trainingOriginalDraft.value = originalDraft.value
       trainingFinalDraft.value = finalDraft.value
+      trainingIsSubmitted.value = isSubmitted.value
+      trainingIsOriginalDraftConfirmed.value = isOriginalDraftConfirmed.value
     } else if (currentMode.value === 'assessment') {
       assessmentOriginalDraft.value = originalDraft.value
       assessmentFinalDraft.value = finalDraft.value
+      assessmentIsSubmitted.value = isSubmitted.value
+      assessmentIsOriginalDraftConfirmed.value = isOriginalDraftConfirmed.value
     }
   })
 
@@ -115,6 +130,7 @@ export function useModeManager({ isConnected }) {
     originalDraft,
     finalDraft,
     activeChatHistory,
+    isSubmitted,
     isOriginalDraftConfirmed,
     switchMode,
     confirmDraft,
