@@ -62,7 +62,7 @@ export async function downloadPDF(history, contributionAnalysis) {
     const contentHtml = md.render(msg.content || "");
     
         conversationHtml += `
-      <div class="message ${msg.role}" style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; page-break-inside: avoid;">
+      <div class="message ${msg.role}" style="margin-bottom: 20px; padding-bottom: 15px; page-break-inside: avoid;">
         <div class="message-header" style="margin-bottom: 5px; font-size: 13px;">
           <strong>${role}</strong> <span class="timestamp" style="color: #888; margin-left: 10px;">${time}</span>
         </div>
@@ -72,37 +72,36 @@ export async function downloadPDF(history, contributionAnalysis) {
 
   });
 
-        const htmlContent = `
-    <div id="pdf-content" style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; width: 700px; background: white;">
-      <h1 style="color: #004085; border-bottom: 2px solid #004085; padding-bottom: 15px; margin: 0 0 20px 0; display: block; width: 100%;">HKBU Learning Session Report</h1>
+    const htmlContent = `
+    <div id="pdf-content" style="padding: 40px; font-family: Arial, sans-serif; color: #333; line-height: 1.5; width: 515pt; background: white;">
+      <h1 style="color: #004085; border-bottom: 2px solid #004085; padding-bottom: 10px; margin-top: 0;">HKBU Learning Session Report</h1>
       
-      <div class="meta" style="margin-bottom: 25px; color: #666; font-size: 13px; display: block;">
+      <div class="meta" style="margin-bottom: 20px; color: #666; font-size: 12px;">
         <p style="margin: 5px 0;">Generated: ${now.toLocaleString()}</p>
         <p style="margin: 5px 0;">Total Messages: ${history.length}</p>
       </div>
 
-      <div class="section" style="page-break-inside: avoid; margin-bottom: 30px; display: block;">
-        <h2 style="color: #004085; font-size: 18px; margin-bottom: 15px;">Your Contribution Analysis</h2>
-        <div class="analysis-content" style="background: #f8f9fa; padding: 20px; border-radius: 5px; border-left: 5px solid #004085; display: block;">
+      <div class="section" style="page-break-inside: avoid;">
+        <h2 style="color: #004085; font-size: 18px; margin-top: 30px; margin-bottom: 10px;">Your Contribution Analysis</h2>
+        <div class="analysis-content" style="background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #004085;">
           ${analysisHtml}
         </div>
       </div>
 
-      <div class="section" style="display: block;">
-        <h2 style="color: #004085; font-size: 18px; margin-top: 30px; margin-bottom: 15px;">Complete Conversation</h2>
-        <div class="conversation-history" style="display: block;">
+      <div class="section">
+        <h2 style="color: #004085; font-size: 18px; margin-top: 30px; margin-bottom: 10px;">Complete Conversation</h2>
+        <div class="conversation-history">
           ${conversationHtml}
         </div>
       </div>
 
-      <div class="footer" style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 11px; color: #666; page-break-inside: avoid; display: block;">
+      <div class="footer" style="margin-top: 50px; padding-top: 20px; font-size: 11px; color: #666; page-break-inside: avoid;">
         <p style="margin: 5px 0;"><strong>Created by:</strong> Dr. Simon Wang, Innovation Officer</p>
         <p style="margin: 5px 0;">Language Centre, Hong Kong Baptist University</p>
         <p style="margin: 5px 0;">simonwang@hkbu.edu.hk</p>
       </div>
     </div>
   `;
-
 
 
   // Create a temporary container to render HTML
