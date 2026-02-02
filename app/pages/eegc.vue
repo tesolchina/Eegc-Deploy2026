@@ -106,6 +106,9 @@
 </template>
 
 <script setup>
+useHead({
+  title: 'EEGC'
+})
 import Swal from 'sweetalert2'
 import { MODE_COLORS, MODE_LABELS } from '~/constants/eegcModes'
 
