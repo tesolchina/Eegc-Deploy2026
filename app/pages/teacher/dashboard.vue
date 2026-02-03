@@ -24,6 +24,11 @@ const isLoading = ref(true)
 const selectedReport = ref<Report | null>(null)
 const showModal = ref(false)
 
+// Duplicate Check State
+const duplicates = ref<any[]>([])
+const isCheckingDuplicates = ref(false)
+const showDuplicateModal = ref(false)
+
 // Statistics
 const stats = computed(() => {
     const total = reports.value.length
@@ -82,6 +87,22 @@ const viewReport = (report: Report) => {
     showModal.value = true
 }
 
+const checkDuplicates = async () => {
+    isCheckingDuplicates.value = true
+    try {
+        const response = await $fetch<{ success: boolean, duplicates: any[] }>('/api/teacher/duplicate-check')
+        if (response.success) {
+            duplicates.value = response.duplicates
+            showDuplicateModal.value = true
+        }
+    } catch (error: any) {
+        console.error('Error checking duplicates:', error)
+        Swal.fire('Error', 'Failed to check duplicates', 'error')
+    } finally {
+        isCheckingDuplicates.value = false
+    }
+}
+
 onMounted(() => {
     fetchReports()
 })
@@ -114,9 +135,18 @@ onMounted(() => {
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Header Section -->
-            <div class="mb-8">
-                <h2 class="text-3xl font-black text-slate-900 mb-2">Reports Dashboard</h2>
-                <p class="text-slate-500">Monitor student progress and analyze learning reports in real-time.</p>
+            <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 class="text-3xl font-black text-slate-900 mb-2">Reports Dashboard</h2>
+                    <p class="text-slate-500">Monitor student progress and analyze learning reports in real-time.</p>
+                </div>
+                <div>
+                    <button @click="checkDuplicates" :disabled="isCheckingDuplicates"
+                        class="flex items-center space-x-2 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-700 font-bold hover:bg-slate-50 hover:border-indigo-200 hover:text-indigo-600 transition-all shadow-sm disabled:opacity-50">
+                        <span>{{ isCheckingDuplicates ? 'Checking...' : 'Check Duplicate ID Suffix' }}</span>
+                        <span v-if="!isCheckingDuplicates">🔍</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Stats Overview (Component) -->
@@ -129,5 +159,9 @@ onMounted(() => {
 
         <!-- Report Details Modal (Component) -->
         <TeacherReportDetailModal :report="selectedReport" :show="showModal" @close="showModal = false" />
+
+        <!-- Duplicate ID Modal (Component) -->
+        <TeacherDuplicateIdModal :duplicates="duplicates" :show="showDuplicateModal"
+            @close="showDuplicateModal = false" />
     </div>
 </template>
