@@ -6,6 +6,8 @@ useHead({
 const loginAs = (role: string) => {
   if (role === 'student') {
     navigateTo('/student/login')
+  } else if (role === 'teacher') {
+    navigateTo('/teacher/login')
   } else {
     console.log(`Logging in as ${role}`)
   }

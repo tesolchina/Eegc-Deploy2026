@@ -55,6 +55,7 @@ export default defineEventHandler(async (event) => {
 
     // Create JWT Token
     const payload = {
+        role: 'student',
         student_number_suffix: data.student_number_suffix,
         name_prefix: data.name_prefix,
         section_number: data.section_number,
