@@ -38,10 +38,13 @@ import MarkdownIt from "markdown-it";
 import Swal from "sweetalert2";
 
 import {
+  ReportFeedback,
+  ReportActions,
+  ReportChatHistory,
   createMarkdownReport,
   downloadPDF,
   downloadMarkdownFile,
-} from "./report/reportUtils";
+} from "./report";
 
 const markdown = new MarkdownIt({
   html: false,
