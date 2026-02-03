@@ -5,8 +5,8 @@
             <div class="font-semibold text-xs mb-1">
                 {{ msgSenderLabel(message.role) }}
             </div>
-            <div class="prose prose-sm max-w-none break-words [&_pre]:whitespace-pre-wrap [&_code]:whitespace-pre-wrap [&_ol]:list-decimal [&_ul]:list-disc"
-                v-html="renderMarkdown(message.content)" />
+            <div class="prose prose-sm max-w-none break-words [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:whitespace-pre-wrap [&_ol]:list-decimal [&_ol]:ml-6 [&_ul]:list-disc"
+                :class="{ 'pl-3': message.role !== 'user' }" v-html="renderMarkdown(message.content)" />
             <div class="text-xs text-gray-400 mt-2 text-right">
                 {{ message.timestamp?.toLocaleTimeString?.() || '' }}
             </div>

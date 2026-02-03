@@ -22,7 +22,7 @@
       <p><strong>Total Messages:</strong> {{ props.chatHistory.length }}</p>
       <h3>📈 Your Contribution Analysis</h3>
       <div
-        class="prose prose-sm max-w-none break-words [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:whitespace-pre-wrap [&_ol]:list-decimal [&_ol]:ml-6 [&_ul]:list-disc"
+        class="prose pl-4 prose-sm max-w-none break-words [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:whitespace-pre-wrap [&_ol]:list-decimal [&_ol]:ml-6 [&_ul]:list-disc"
         v-html="renderMarkdown(contributionAnalysis)" />
 
       <h3>📝 Complete Conversation</h3>
