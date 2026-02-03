@@ -19,7 +19,6 @@ const loginAs = (role: string) => {
     <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
       <div class="p-8 text-center bg-indigo-600">
         <h1 class="text-3xl font-extrabold text-white mb-2">EEGC</h1>
-        <p class="text-indigo-100 italic">Electronic Evidence Game</p>
       </div>
 
       <div class="p-8 space-y-8">
