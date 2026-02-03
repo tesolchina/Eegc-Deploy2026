@@ -5,6 +5,7 @@ export default defineNuxtConfig({
     poeApiKey: process.env.POE_API_KEY || '',
     supabaseUrl: process.env.SUPABASE_URL || '',
     supabaseKey: process.env.SUPABASE_PUBLISHABLE_KEY || '',
+    jwtSecret: process.env.JWT_SECRET || 'F6ucvnzSYQofmivdyxehpa7Te3nWlgIyxeh',
   },
   devtools: { enabled: true },
 
