@@ -8,6 +8,11 @@ export default defineNuxtConfig({
     jwtSecret: process.env.JWT_SECRET || 'F6ucvnzSYQofmivdyxehpa7Te3nWlgIyxeh',
   },
   devtools: { enabled: true },
+  vite: {
+    server: {
+      allowedHosts: 'all'
+    }
+  },
 
   // 添加这一行，让 Nuxt 知道你在使用这个模块
   modules: ['@nuxtjs/tailwindcss'],
