@@ -90,3 +90,4 @@ Kaitai 暂时只确保技术方面没有问题，内容和流程方面的调整�
 - [产品决策问题](../discussion/questions-for-simon.md) - Simon 的回复
 - [开发影响分析](../discussion/implications4Dev.md) - 技术实现方案
 - [模块文档](../modules/README.md) - 代码模块说明
+- [学生白名单功能](../features/student-whitelist.md) - 白名单功能技术文档、测试指南和回滚说明
