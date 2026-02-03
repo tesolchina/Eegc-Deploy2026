@@ -96,8 +96,7 @@ const handleSubmit = async () => {
 
             <div class="p-8 space-y-6">
                 <!-- Success Message after Registration -->
-                <div v-if="generatedCode"
-                    class="bg-indigo-50 border-2 border-indigo-200 rounded-xl p-6 text-center animate-bounce-short">
+                <div v-if="generatedCode" class="bg-indigo-50 border-2 border-indigo-200 rounded-xl p-6 text-center">
                     <p class="text-indigo-800 font-medium mb-2">Your Registration Code:</p>
                     <div class="text-3xl font-black text-indigo-600 tracking-tight mb-4 font-mono">
                         {{ generatedCode }}
@@ -105,7 +104,7 @@ const handleSubmit = async () => {
                     <p class="text-sm text-indigo-600">Please keep this code safe. You will need it to access your
                         portal.</p>
                     <button @click="goBack"
-                        class="mt-6 w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-colors">
+                        class="mt-6 w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700">
                         Go to Login
                     </button>
                 </div>
@@ -116,7 +115,7 @@ const handleSubmit = async () => {
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Student Number (Last 4
                             digits)</label>
                         <input v-model="form.studentNumberSuffix" type="text" maxlength="4" placeholder="e.g. 1234"
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                             required>
                     </div>
 
@@ -124,19 +123,19 @@ const handleSubmit = async () => {
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Name Prefix (First 2
                             letters)</label>
                         <input v-model="form.namePrefix" type="text" maxlength="2" placeholder="e.g. JD"
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all uppercase"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none uppercase"
                             required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Section Number</label>
                         <input v-model="form.sectionNumber" type="number" placeholder="e.g. 1"
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                             required>
                     </div>
 
                     <button type="submit" :disabled="isSubmitting"
-                        class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                        class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed">
                         <span v-if="isSubmitting">Creating your ID...</span>
                         <span v-else>Register & Get My Code ✨</span>
                     </button>
@@ -144,7 +143,7 @@ const handleSubmit = async () => {
 
                 <div v-if="!generatedCode" class="text-center">
                     <button @click="goBack"
-                        class="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors flex items-center justify-center mx-auto">
+                        class="text-sm font-medium text-gray-500 hover:text-indigo-600 flex items-center justify-center mx-auto">
                         <span class="mr-1">←</span> Back to Login
                     </button>
                 </div>
@@ -152,21 +151,3 @@ const handleSubmit = async () => {
         </div>
     </div>
 </template>
-
-<style scoped>
-@keyframes bounce-short {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-5px);
-    }
-}
-
-.animate-bounce-short {
-    animation: bounce-short 2s ease-in-out infinite;
-}
-</style>
