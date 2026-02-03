@@ -10,8 +10,12 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   vite: {
     server: {
-      allowedHosts: 'all'
+      allowedHosts: true
     }
+  },
+  devServer: {
+    host: '0.0.0.0',
+    port: 5000
   },
 
   // 添加这一行，让 Nuxt 知道你在使用这个模块
