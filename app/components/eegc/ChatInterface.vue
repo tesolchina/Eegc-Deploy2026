@@ -288,6 +288,14 @@ function scrollToBottom() {
 }
 watch(() => props.activeChatHistory, scrollToBottom, { deep: true, flush: "post" });
 
+watch(() => props.isThinking, (isThinking) => {
+  if (!isThinking) {
+    nextTick(() => {
+      chatInput.value?.focus();
+    });
+  }
+});
+
 const chatInput = ref(null);
 const inputHeight = ref(80);
 let dragState = { startY: 0, startHeight: 0 };
