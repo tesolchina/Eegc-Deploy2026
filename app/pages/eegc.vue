@@ -1,4 +1,5 @@
 <template>
+  <AuthGuard />
   <!-- Main Content -->
   <div class="w-full p-4 flex-1 flex flex-col">
     <!-- Header -->
