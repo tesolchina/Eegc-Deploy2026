@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import MarkdownIt from 'markdown-it'
+import ChatMessageItem from '../eegc/chat/ChatMessageItem.vue'
 
 const md = new MarkdownIt({
     html: false,
@@ -133,25 +134,9 @@ const contributionContent = computed(() => {
                         </div>
 
                         <div v-if="report?.chat_history && report.chat_history.length > 0"
-                            class="space-y-4 max-w-3xl mx-auto">
-                            <div v-for="(msg, i) in report.chat_history" :key="i" class="flex"
-                                :class="msg.role === 'user' ? 'justify-end' : 'justify-start'">
-                                <div :class="[
-                                    'max-w-[85%] px-5 py-3 rounded-2xl shadow-sm border',
-                                    msg.role === 'user'
-                                        ? 'bg-indigo-600 text-white border-indigo-500 rounded-br-none'
-                                        : 'bg-white text-slate-800 border-slate-100 rounded-bl-none shadow-indigo-500/5'
-                                ]">
-                                    <div class="font-bold text-[10px] uppercase tracking-widest mb-1 opacity-60"
-                                        :class="msg.role === 'user' ? 'text-indigo-100' : 'text-slate-400'">
-                                        {{ msg.role === 'user' ? 'Student' : 'AI Assistant' }}
-                                    </div>
-                                    <div class="prose prose-sm max-w-none break-words [&_pre]:whitespace-pre-wrap [&_code]:whitespace-pre-wrap [&_ol]:list-decimal [&_ul]:list-disc"
-                                        :class="msg.role === 'user' ? 'text-white prose-invert' : 'text-slate-700'"
-                                        v-html="renderMarkdown(msg.content)">
-                                    </div>
-                                </div>
-                            </div>
+                            class="space-y-4 w-full mx-auto">
+                            <ChatMessageItem v-for="(msg, i) in report.chat_history" :key="i" :message="msg"
+                                user-label="Student" ai-label="AI Assistant" full-width />
                         </div>
                         <div v-else
                             class="text-center py-20 bg-slate-50 rounded-2xl border border-dashed border-slate-200">

@@ -1,7 +1,7 @@
 <template>
     <div class="flex" :class="message.role === 'user' ? 'justify-end' : 'justify-start'">
-        <div class="max-w-lg md:max-w-md lg:max-w-lg px-4 py-3 rounded-2xl shadow text-base break-words"
-            :class="msgClasses(message)">
+        <div class="px-4 py-3 rounded-2xl shadow text-base break-words"
+            :class="[msgClasses(message), fullWidth ? 'w-full' : 'max-w-lg md:max-w-md lg:max-w-lg']">
             <div class="font-semibold text-xs mb-1">
                 {{ msgSenderLabel(message.role) }}
             </div>
@@ -22,12 +22,24 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    userLabel: {
+        type: String,
+        default: "You",
+    },
+    aiLabel: {
+        type: String,
+        default: "AI Tutor",
+    },
+    fullWidth: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const markdown = new MarkdownIt({ linkify: true, typographer: true });
 const renderMarkdown = (text = "") => markdown.render(text);
 
-const msgSenderLabel = (role) => (role === "user" ? "You" : "AI Tutor");
+const msgSenderLabel = (role) => (role === "user" ? props.userLabel : props.aiLabel);
 const msgClasses = (msg) =>
     msg.role === "user"
         ? "bg-indigo-600 text-white rounded-br-none"
