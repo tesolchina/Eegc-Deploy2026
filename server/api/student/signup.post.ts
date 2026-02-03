@@ -16,13 +16,17 @@ export default defineEventHandler(async (event) => {
     const supabase = createClient(config.supabaseUrl, config.supabaseKey)
 
     // Check if student is in the whitelist
+    console.log('Checking whitelist for:', student_number_suffix, typeof student_number_suffix)
     const { data: whitelistEntry, error: whitelistError } = await supabase
         .from('student_whitelist')
         .select('*')
         .eq('student_number_suffix', student_number_suffix)
         .single()
 
+    console.log('Whitelist result:', { whitelistEntry, whitelistError })
+
     if (whitelistError || !whitelistEntry) {
+        console.log('Whitelist check failed:', whitelistError?.message)
         throw createError({
             statusCode: 403,
             statusMessage: 'NOT_IN_WHITELIST',
