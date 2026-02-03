@@ -162,9 +162,6 @@ export function useChatFunctions({
                     const updatedMsg = { ...activeChatHistory.value[lastIndex], content: reply };
                     activeChatHistory.value.splice(lastIndex, 1, updatedMsg);
                 }
-                // if (isOriginalDraftConfirmed.value) {
-                //     await extractAndUpdateEssay();
-                // }
             }
         } catch (error) {
             const lastIndex = activeChatHistory.value.length - 1;
@@ -176,33 +173,6 @@ export function useChatFunctions({
             isThinking.value = false;
         }
     }
-
-    // async function extractAndUpdateEssay() {
-    //     isUpdatingDraft.value = true;
-    //     const refinedChatHistory = activeChatHistory.value.slice(-4);
-
-    //     let payloadHistory = [
-    //         {
-    //             role: "system",
-    //             content:
-    //                 BulletPoints_Generation_Prompt +
-    //                 refinedChatHistory
-    //                     .map((msg) => `${msg.role === "user" ? "User" : "AI"}: ${msg.content}`)
-    //                     .join("\n")
-    //         },
-    //     ];
-
-    //     try {
-    //         const reply = await talkToChatbot(payloadHistory);
-    //         if (reply && reply.trim().length > 25) {
-    //             bulletPoints.value = reply.trim();
-    //         }
-    //     } catch (error) {
-    //         console.error("Error extracting essay:", error);
-    //     } finally {
-    //         isUpdatingDraft.value = false;
-    //     }
-    // }
 
     return {
         sendMessage,
