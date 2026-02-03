@@ -223,7 +223,7 @@ async function submitReport() {
   submitting.value = true;
 
   try {
-    const response = await fetch("/api/submit-report", {
+    const response = await fetch("/api/student/submit-report", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
