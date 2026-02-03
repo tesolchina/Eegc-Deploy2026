@@ -1,7 +1,7 @@
 <script setup lang="ts">
 onMounted(() => {
     const userStatus = localStorage.getItem('userStatus')
-    if (userStatus !== 'logged in') {
+    if (userStatus !== 'student' && userStatus !== 'teacher') {
         navigateTo('/')
     }
 })

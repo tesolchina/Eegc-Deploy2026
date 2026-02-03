@@ -4,23 +4,8 @@ import jwt from 'jsonwebtoken'
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
 
-    // Basic Auth Check
-    const token = getCookie(event, 'teacher_auth')
-    if (!token) {
-        throw createError({
-            statusCode: 401,
-            statusMessage: 'Unauthorized: Teacher login required',
-        })
-    }
-
-    try {
-        jwt.verify(token, config.jwtSecret)
-    } catch (err) {
-        throw createError({
-            statusCode: 401,
-            statusMessage: 'Invalid or expired token',
-        })
-    }
+    // Auth is now handled by server/middleware/auth.ts
+    // The decoded user info is available in event.context.user
 
     const supabase = createClient(config.supabaseUrl, config.supabaseKey)
 

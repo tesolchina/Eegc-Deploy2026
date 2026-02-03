@@ -47,7 +47,7 @@ const handleLogin = async () => {
         })
 
         if (response.success) {
-            localStorage.setItem('userStatus', 'logged in')
+            localStorage.setItem('userStatus', 'student')
             Swal.fire({
                 icon: 'success',
                 title: 'Login Successful',
