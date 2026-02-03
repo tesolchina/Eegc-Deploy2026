@@ -29,7 +29,7 @@
 | 老师账户需手动在数据库注册 | 目前由 Kaitai/Simon 手动操作 | 暂时保持现状 |
 | 数据库密码明文存储 | 不涉及隐私信息，暂时可接受 | 暂时保持现状 |
 
-> ⚠️ **文档冲突说明**：本文档（`development-progress.md`）与 `implications4Dev.md` 在 `section_teachers` 字段的处理逻辑上存在不一致。经讨论后，当前开发工作以本文档为准。若后续需要调整实现方式，请 Simon 提出修改意见。
+> ⚠️ **文档冲突说明**：本文档（`development-progress.md`）与 `implications4Dev.md` 在 `section_teachers` 字段的处理逻辑上存在不一致。当前开发工作以本文档为准。若后续需要调整实现方式，请 Simon 提出修改意见。
 
 ---
 
