@@ -19,8 +19,9 @@ Preferred communication style: Simple, everyday language.
 - **JWT Authentication**: Custom middleware (`server/middleware/auth.ts`) validates tokens for protected routes. Separate tokens exist for students (`student_auth`) and teachers (`teacher_auth`)
 
 ### Data Storage
-- **Supabase (PostgreSQL)**: External database service for persistent storage
-- Three main tables:
+- **IMPORTANT: External Supabase Database** - This project uses an EXTERNAL Supabase instance, NOT Replit's built-in database. DO NOT use Replit's `execute_sql_tool` for database operations. All table creation/modification must be done through the Supabase Console SQL Editor.
+- See `agent.md` for detailed instructions and bug history
+- Four main tables:
   - `learning_reports`: Stores chat histories, ratings, and AI-generated contribution analysis
   - `students`: Registration data with unique ID generation (suffix + name prefix + random code)
   - `teachers`: Email-based accounts with plaintext passwords (acknowledged limitation)
