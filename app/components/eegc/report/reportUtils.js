@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import MarkdownIt from "markdown-it";
+import DOMPurify from "dompurify";
 
 // Ensure html2canvas is available globally for jsPDF
 if (typeof window !== "undefined") {
@@ -125,7 +126,7 @@ export async function downloadPDF(history, contributionAnalysis) {
   container.style.zIndex = "-9999";
   // 强制宽度为 A4 像素宽度 (794px at 96dpi)，保证排版一致
   container.style.width = "794px";
-  container.innerHTML = htmlContent;
+  container.innerHTML = DOMPurify.sanitize(htmlContent);
   document.body.appendChild(container);
 
   const contentElement = container.querySelector("#pdf-container");
