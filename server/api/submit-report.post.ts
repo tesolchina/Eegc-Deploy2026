@@ -1,38 +1,35 @@
-import { createClient } from '@supabase/supabase-js'
+import { getPool } from '../utils/db'
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig()
-  const body = await readBody(event)
+    const body = await readBody(event)
+    const pool = getPool()
 
-  const supabase = createClient(config.supabaseUrl, config.supabaseKey)
+    try {
+        await pool.query(
+            `INSERT INTO learning_reports (student_number_suffix, student_name_prefix, section_number, rating, comment, mode, chat_history, contribution_analysis, metadata)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+            [
+                body.student_number,
+                body.student_email,
+                body.section_number ? parseInt(body.section_number) : null,
+                body.rating,
+                body.comment,
+                body.mode,
+                JSON.stringify(body.chat_history),
+                JSON.stringify({ content: body.contribution_analysis }),
+                JSON.stringify({
+                    hidden_report: body.hidden_report,
+                    report_info: body.report_info,
+                }),
+            ]
+        )
 
-  const { error } = await supabase
-    .from('learning_reports')
-    .insert([
-      {
-        student_number: body.student_number,
-        student_email: body.student_email,
-        section_number: body.section_number ? parseInt(body.section_number) : null,
-        rating: body.rating,
-        comment: body.comment,
-        mode: body.mode,
-        teacher_name: body.teacher_name,
-        chat_history: body.chat_history,
-        contribution_analysis: { content: body.contribution_analysis },
-        metadata: {
-          hidden_report: body.hidden_report,
-          report_info: body.report_info,
-        },
-      }
-    ])
-
-  if (error) {
-    console.error('Supabase Error:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: error.message,
-    })
-  }
-
-  return { success: true }
+        return { success: true }
+    } catch (error: any) {
+        console.error('DB Error:', error)
+        throw createError({
+            statusCode: 500,
+            statusMessage: error.message,
+        })
+    }
 })

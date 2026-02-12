@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { getPool } from '../../utils/db'
 import jwt from 'jsonwebtoken'
 
 export default defineEventHandler(async (event) => {
@@ -14,8 +14,6 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    // Expected format: SSSS-NN-RR (Suffix-NamePrefix-RandomCode)
-    // Example: 1234-JD-A1
     const parts = uniqueId.split('-')
     if (parts.length !== 3) {
         throw createError({
@@ -34,26 +32,22 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    const supabase = createClient(config.supabaseUrl, config.supabaseKey)
+    const pool = getPool()
 
-    // Search for the student in database
-    const { data, error } = await supabase
-        .from('students')
-        .select('*')
-        .eq('student_number_suffix', student_number_suffix)
-        .eq('name_prefix', namePrefix.toUpperCase())
-        .eq('random_code', randomCode.toUpperCase())
-        .single()
+    const result = await pool.query(
+        'SELECT * FROM students WHERE student_number_suffix = $1 AND name_prefix = $2 AND random_code = $3',
+        [student_number_suffix, namePrefix.toUpperCase(), randomCode.toUpperCase()]
+    )
 
-    if (error || !data) {
-        console.error('Login error:', error)
+    if (result.rows.length === 0) {
         throw createError({
             statusCode: 401,
             statusMessage: 'Invalid ID or student not found',
         })
     }
 
-    // Create JWT Token
+    const data = result.rows[0]
+
     const payload = {
         role: 'student',
         student_number_suffix: data.student_number_suffix,
@@ -64,12 +58,11 @@ export default defineEventHandler(async (event) => {
 
     const token = jwt.sign(payload, config.jwtSecret, { expiresIn: '7d' })
 
-    // Set cookie
     setCookie(event, 'student_auth', token, {
         httpOnly: true,
         sameSite: 'strict',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 24 * 7 // 7 days
+        maxAge: 60 * 60 * 24 * 7
     })
 
     return {

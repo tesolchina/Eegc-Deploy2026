@@ -1,29 +1,22 @@
-import { createClient } from '@supabase/supabase-js'
-import jwt from 'jsonwebtoken'
+import { getPool } from '../../utils/db'
 
 export default defineEventHandler(async (event) => {
-    const config = useRuntimeConfig()
+    const pool = getPool()
 
-    // Auth is now handled by server/middleware/auth.ts
-    // The decoded user info is available in event.context.user
+    try {
+        const result = await pool.query(
+            'SELECT * FROM learning_reports ORDER BY created_at DESC'
+        )
 
-    const supabase = createClient(config.supabaseUrl, config.supabaseKey)
-
-    const { data, error } = await supabase
-        .from('learning_reports')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-    if (error) {
-        console.error('Supabase Error fetching reports:', error)
+        return {
+            success: true,
+            reports: result.rows
+        }
+    } catch (error: any) {
+        console.error('DB Error fetching reports:', error)
         throw createError({
             statusCode: 500,
             statusMessage: error.message,
         })
-    }
-
-    return {
-        success: true,
-        reports: data
     }
 })

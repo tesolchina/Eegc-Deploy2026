@@ -1,59 +1,58 @@
-import { createClient } from '@supabase/supabase-js'
+import { getPool } from '../../utils/db'
 import jwt from 'jsonwebtoken'
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig()
-  const body = await readBody(event)
+    const config = useRuntimeConfig()
+    const body = await readBody(event)
 
-  // Extract student info from JWT
-  const token = getCookie(event, 'student_auth')
-  if (!token) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized: Student login required',
-    })
-  }
+    const token = getCookie(event, 'student_auth')
+    if (!token) {
+        throw createError({
+            statusCode: 401,
+            statusMessage: 'Unauthorized: Student login required',
+        })
+    }
 
-  let decoded: any
-  try {
-    decoded = jwt.verify(token, config.jwtSecret)
-  } catch (err) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Invalid or expired token',
-    })
-  }
+    let decoded: any
+    try {
+        decoded = jwt.verify(token, config.jwtSecret)
+    } catch (err) {
+        throw createError({
+            statusCode: 401,
+            statusMessage: 'Invalid or expired token',
+        })
+    }
 
-  const { student_number_suffix, name_prefix, section_number } = decoded
+    const { student_number_suffix, name_prefix, section_number } = decoded
 
-  const supabase = createClient(config.supabaseUrl, config.supabaseKey)
+    const pool = getPool()
 
-  const { error } = await supabase
-    .from('learning_reports')
-    .insert([
-      {
-        student_number_suffix: student_number_suffix,
-        student_name_prefix: name_prefix,
-        section_number: section_number ? parseInt(section_number) : null,
-        rating: body.rating,
-        comment: body.comment,
-        mode: body.mode,
-        chat_history: body.chat_history,
-        contribution_analysis: { content: body.contribution_analysis },
-        metadata: {
-          hidden_report: body.hidden_report,
-          report_info: body.report_info,
-        },
-      }
-    ])
+    try {
+        await pool.query(
+            `INSERT INTO learning_reports (student_number_suffix, student_name_prefix, section_number, rating, comment, mode, chat_history, contribution_analysis, metadata)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+            [
+                student_number_suffix,
+                name_prefix,
+                section_number ? parseInt(section_number) : null,
+                body.rating,
+                body.comment,
+                body.mode,
+                JSON.stringify(body.chat_history),
+                JSON.stringify({ content: body.contribution_analysis }),
+                JSON.stringify({
+                    hidden_report: body.hidden_report,
+                    report_info: body.report_info,
+                }),
+            ]
+        )
 
-  if (error) {
-    console.error('Supabase Error:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: error.message,
-    })
-  }
-
-  return { success: true }
+        return { success: true }
+    } catch (error: any) {
+        console.error('DB Error:', error)
+        throw createError({
+            statusCode: 500,
+            statusMessage: error.message,
+        })
+    }
 })
