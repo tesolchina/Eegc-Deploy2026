@@ -42,8 +42,8 @@ const handleSubmit = async () => {
     if (form.value.namePrefix.length !== 2) {
         Swal.fire({
             icon: 'error',
-            title: 'Invalid Name Prefix',
-            text: 'Please enter the first two letters of your name.',
+            title: 'Invalid Name Initials',
+            text: 'Please enter the initials of your first and last name (2 letters). e.g. John Kwok → JK',
             confirmButtonColor: '#4f46e5'
         })
         return
@@ -130,18 +130,23 @@ const handleSubmit = async () => {
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Name Prefix (First 2
-                            letters)</label>
-                        <input v-model="form.namePrefix" type="text" maxlength="2" placeholder="e.g. JD"
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Name Initials (First & Last Name)</label>
+                        <p class="text-xs text-gray-500 mb-1">e.g. John Kwok → JK</p>
+                        <input v-model="form.namePrefix" type="text" maxlength="2" placeholder="e.g. JK"
                             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none uppercase"
+                            data-testid="input-name-prefix"
                             required>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Section Number</label>
-                        <input v-model="form.sectionNumber" type="number" placeholder="e.g. 1"
-                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Section</label>
+                        <select v-model="form.sectionNumber"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+                            data-testid="select-section"
                             required>
+                            <option value="" disabled>Select your section</option>
+                            <option v-for="n in 10" :key="n" :value="String(n)">Section {{ n }}</option>
+                        </select>
                     </div>
 
                     <button type="submit" :disabled="isSubmitting"
