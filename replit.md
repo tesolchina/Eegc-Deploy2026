@@ -8,12 +8,6 @@ EEGC (English Essay Guidance Companion) is an AI-powered language learning assis
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes
-
-- **2026-02-12**: Migrated from external Supabase to Replit's built-in PostgreSQL database. Removed `@supabase/supabase-js` dependency. All server API routes now use `node-postgres` (`pg`) with connection pooling via `server/utils/db.ts`.
-- **2026-02-12**: Cleaned up `nuxt.config.ts` to remove Supabase runtime config references.
-- **2026-02-12**: Student signup form updated: Section field changed to dropdown (1-10), Name Prefix relabeled to "Name Initials" with example "John Kwok → JK".
-
 ## System Architecture
 
 ### Frontend Framework
@@ -25,13 +19,13 @@ Preferred communication style: Simple, everyday language.
 - **JWT Authentication**: Custom middleware (`server/middleware/auth.ts`) validates tokens for protected routes. Separate tokens exist for students (`student_auth`) and teachers (`teacher_auth`)
 
 ### Data Storage
-- **Replit Built-in PostgreSQL**: Uses `DATABASE_URL` environment variable (auto-configured by Replit). Database operations use `node-postgres` (`pg`) with connection pooling via `server/utils/db.ts`.
+- **IMPORTANT: External Supabase Database** - This project uses an EXTERNAL Supabase instance, NOT Replit's built-in database. DO NOT use Replit's `execute_sql_tool` for database operations. All table creation/modification must be done through the Supabase Console SQL Editor.
+- See `agent.md` for detailed instructions and bug history
 - Four main tables:
   - `learning_reports`: Stores chat histories, ratings, and AI-generated contribution analysis
   - `students`: Registration data with unique ID generation (suffix + name prefix + random code)
   - `teachers`: Email-based accounts with plaintext passwords (acknowledged limitation)
   - `student_whitelist`: Controls which students can register
-- **Temporary seed endpoint**: `POST /api/admin/seed-test-data` exists for one-time production seeding. Should be removed after production data is seeded.
 
 ### AI Integration
 - **Poe API** (OpenAI-compatible format): Server-side API key management eliminates need for students to provide keys
@@ -48,16 +42,15 @@ Preferred communication style: Simple, everyday language.
 ### Key Pages
 - `/` - Landing page with login options
 - `/eegc` - Main application interface with mode switching, chat, and report generation
-- `/student/signup` - Student registration form
 
 ## External Dependencies
 
 ### Services
-- **Replit PostgreSQL**: Built-in database (configured via `DATABASE_URL`)
+- **Supabase**: PostgreSQL database hosting (configured via `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`)
 - **Poe API**: AI chat completions endpoint at `api.poe.com/v1` (configured via `POE_API_KEY`)
 
 ### Key NPM Packages
-- `pg`: PostgreSQL client with connection pooling
+- `@supabase/supabase-js`: Database client
 - `openai`: Used for Poe API compatibility layer
 - `jsonwebtoken`: JWT token creation and verification
 - `jspdf` + `html2canvas`: PDF report generation
@@ -68,5 +61,6 @@ Preferred communication style: Simple, everyday language.
 | Variable | Purpose |
 |----------|---------|
 | `POE_API_KEY` | Poe API authentication |
-| `DATABASE_URL` | PostgreSQL connection (auto-configured by Replit) |
+| `SUPABASE_URL` | Database connection |
+| `SUPABASE_PUBLISHABLE_KEY` | Database authentication |
 | `JWT_SECRET` | Token signing (has default fallback) |

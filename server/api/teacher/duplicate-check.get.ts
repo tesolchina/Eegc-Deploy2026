@@ -1,40 +1,42 @@
-import { getPool } from '../../utils/db'
+import { createClient } from '@supabase/supabase-js'
 
 export default defineEventHandler(async (event) => {
-    const pool = getPool()
+    const config = useRuntimeConfig()
+    const supabase = createClient(config.supabaseUrl, config.supabaseKey)
 
-    try {
-        const result = await pool.query(
-            'SELECT student_number_suffix, name_prefix, section_number FROM students'
-        )
+    // Fetch all students
+    const { data: students, error } = await supabase
+        .from('students')
+        .select('student_number_suffix, name_prefix, section_number')
 
-        const students = result.rows
-
-        const suffixCounts: Record<string, any[]> = {}
-        students.forEach(student => {
-            const suffix = student.student_number_suffix.toString()
-            if (!suffixCounts[suffix]) {
-                suffixCounts[suffix] = []
-            }
-            suffixCounts[suffix].push(student)
-        })
-
-        const duplicates = Object.entries(suffixCounts)
-            .filter(([_, list]) => list.length > 1)
-            .map(([suffix, list]) => ({
-                suffix,
-                students: list
-            }))
-
-        return {
-            success: true,
-            duplicates
-        }
-    } catch (error: any) {
-        console.error('DB Error fetching students:', error)
+    if (error) {
+        console.error('Supabase Error fetching students:', error)
         throw createError({
             statusCode: 500,
             statusMessage: error.message,
         })
+    }
+
+    // Count occurrences of each student_number_suffix
+    const suffixCounts: Record<string, any[]> = {}
+    students.forEach(student => {
+        const suffix = student.student_number_suffix.toString()
+        if (!suffixCounts[suffix]) {
+            suffixCounts[suffix] = []
+        }
+        suffixCounts[suffix].push(student)
+    })
+
+    // Filter for duplicates
+    const duplicates = Object.entries(suffixCounts)
+        .filter(([_, list]) => list.length > 1)
+        .map(([suffix, list]) => ({
+            suffix,
+            students: list
+        }))
+
+    return {
+        success: true,
+        duplicates
     }
 })

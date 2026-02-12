@@ -1,4 +1,4 @@
-import { getPool } from '../../utils/db'
+import { createClient } from '@supabase/supabase-js'
 import jwt from 'jsonwebtoken'
 
 export default defineEventHandler(async (event) => {
@@ -14,22 +14,25 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    const pool = getPool()
+    const supabase = createClient(config.supabaseUrl, config.supabaseKey)
 
-    const result = await pool.query(
-        'SELECT * FROM teachers WHERE email = $1 AND password = $2',
-        [email, password]
-    )
+    // Search for the teacher in database
+    const { data, error } = await supabase
+        .from('teachers')
+        .select('*')
+        .eq('email', email)
+        .eq('password', password) // Plain text password as per requirement
+        .single()
 
-    if (result.rows.length === 0) {
+    if (error || !data) {
+        console.error('Teacher login error:', error)
         throw createError({
             statusCode: 401,
             statusMessage: 'Invalid email or password',
         })
     }
 
-    const data = result.rows[0]
-
+    // Check if teacher is active
     if (!data.is_active) {
         throw createError({
             statusCode: 403,
@@ -37,6 +40,7 @@ export default defineEventHandler(async (event) => {
         })
     }
 
+    // Create JWT Token
     const payload = {
         role: 'teacher',
         email: data.email,
@@ -45,11 +49,12 @@ export default defineEventHandler(async (event) => {
 
     const token = jwt.sign(payload, config.jwtSecret, { expiresIn: '7d' })
 
+    // Set cookie
     setCookie(event, 'teacher_auth', token, {
         httpOnly: true,
         sameSite: 'strict',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 24 * 7
+        maxAge: 60 * 60 * 24 * 7 // 7 days
     })
 
     return {

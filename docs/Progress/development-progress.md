@@ -19,52 +19,6 @@
 | 8 | 数据库 schema 更新（students, teachers 表） | ✅ 已完成 | 2026-02-03 | |
 | 9 | 重复学号后4位检查 API | ✅ 已完成 | 2026-02-03 | 老师仪表板显示重复 ID |
 | 10 | 学生注册白名单功能 | ✅ 已完成 | 2026-02-03 | 只有在 `student_whitelist` 表中的学号后4位才能注册 |
-| 11 | 注册表单优化：Section 改为下拉菜单 + Name Prefix 改为 Name Initials | ✅ 已完成 | 2026-02-12 | 详见下方变更记录 |
-
----
-
-## 变更记录 📝
-
-### 2026-02-12：学生注册表单优化
-
-**变更文件**: `app/pages/student/signup.vue`
-
-**变更 1 — Section Number 改为下拉菜单**
-
-- **原实现**: `<input>` 数字输入框，学生需手动输入 section 编号
-- **新实现**: `<select>` 下拉菜单，提供 Section 1 ~ Section 10 共 10 个选项
-- **代码变更**:
-  ```diff
-  - <label>Section Number</label>
-  - <input v-model="form.sectionNumber" type="number" placeholder="e.g. 1" />
-  + <label>Section</label>
-  + <select v-model="form.sectionNumber">
-  +   <option value="" disabled>Select your section</option>
-  +   <option v-for="n in 10" :key="n" :value="String(n)">Section {{ n }}</option>
-  + </select>
-  ```
-- **原因**: Google Docs 测试反馈指出 Section 应使用下拉菜单，避免输入错误
-
-**变更 2 — Name Prefix 改为 Name Initials**
-
-- **原实现**: 标签为 "Name Prefix (First 2 letters)"，placeholder 为 "e.g. JD"
-- **新实现**: 标签改为 "Name Initials (First & Last Name)"，新增提示文字 "e.g. John Kwok → JK"，placeholder 改为 "e.g. JK"
-- **代码变更**:
-  ```diff
-  - <label>Name Prefix (First 2 letters)</label>
-  - <input placeholder="e.g. JD" />
-  + <label>Name Initials (First & Last Name)</label>
-  + <p class="text-xs text-gray-500 mb-1">e.g. John Kwok → JK</p>
-  + <input placeholder="e.g. JK" />
-  ```
-- **验证错误信息同步更新**:
-  ```diff
-  - title: 'Invalid Name Prefix'
-  - text: 'Please enter the first two letters of your name.'
-  + title: 'Invalid Name Initials'
-  + text: 'Please enter the initials of your first and last name (2 letters). e.g. John Kwok → JK'
-  ```
-- **原因**: Google Docs 测试反馈指出 Name Prefix 含义不够清晰，需要加示例说明
 
 ---
 

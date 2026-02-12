@@ -1,6 +1,7 @@
-import { getPool } from '../../utils/db'
+import { createClient } from '@supabase/supabase-js'
 
 export default defineEventHandler(async (event) => {
+    const config = useRuntimeConfig()
     const body = await readBody(event)
 
     const { student_number_suffix, name_prefix, section_number } = body
@@ -12,42 +13,52 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    const pool = getPool()
+    const supabase = createClient(config.supabaseUrl, config.supabaseKey)
 
-    const whitelistResult = await pool.query(
-        'SELECT * FROM student_whitelist WHERE student_number_suffix = $1',
-        [student_number_suffix]
-    )
+    // Check if student is in the whitelist
+    const { data: whitelistEntry, error: whitelistError } = await supabase
+        .from('student_whitelist')
+        .select('*')
+        .eq('student_number_suffix', student_number_suffix)
+        .single()
 
-    if (whitelistResult.rows.length === 0) {
+    if (whitelistError || !whitelistEntry) {
         throw createError({
             statusCode: 403,
             statusMessage: 'NOT_IN_WHITELIST',
         })
     }
 
+    // Generate a random 2-character code (letters and digits)
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     let random_code = ''
     for (let i = 0; i < 2; i++) {
         random_code += characters.charAt(Math.floor(Math.random() * characters.length))
     }
 
-    try {
-        const result = await pool.query(
-            'INSERT INTO students (student_number_suffix, name_prefix, section_number, random_code) VALUES ($1, $2, $3, $4) RETURNING id',
-            [student_number_suffix, name_prefix, section_number, random_code]
-        )
+    const { data, error } = await supabase
+        .from('students')
+        .insert([
+            {
+                student_number_suffix,
+                name_prefix,
+                section_number,
+                random_code
+            }
+        ])
+        .select()
 
-        return {
-            success: true,
-            id: result.rows[0].id,
-            random_code: random_code
-        }
-    } catch (error: any) {
-        console.error('DB Error:', error)
+    if (error) {
+        console.error('Supabase Error:', error)
         throw createError({
             statusCode: 500,
             statusMessage: error.message,
         })
+    }
+
+    return {
+        success: true,
+        id: data[0].id,
+        random_code: random_code
     }
 })
