@@ -5,6 +5,9 @@ Last Updated: 2026-02-06
 
 ---
 
+https://docs.google.com/document/d/14-iRexpF2vsATd63SIWTgX2peG4po9CbQ_6YwkLVHiw/edit?tab=t.0 
+
+
 ## Overview
 
 This document provides a step-by-step manual testing plan for the EEGC application. It is intended for non-technical testers (e.g. Simon) to verify all features before the February 25 demo.
