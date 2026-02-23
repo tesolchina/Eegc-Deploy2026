@@ -5,12 +5,18 @@ const props = withDefaults(defineProps<{
     redirectTo: '/aiedit'
 })
 
+const isAuthenticated = ref(false)
+
 onMounted(() => {
     const userStatus = localStorage.getItem('userStatus')
     if (userStatus !== 'student' && userStatus !== 'teacher') {
         navigateTo(props.redirectTo)
+    } else {
+        isAuthenticated.value = true
     }
 })
+
+provide('authGuardAuthenticated', isAuthenticated)
 </script>
 
 <template>
