@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { findTeacher } from '~/server/config/teacherAccounts'
+import { findTeacher } from '../../config/teacherAccounts'
 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
