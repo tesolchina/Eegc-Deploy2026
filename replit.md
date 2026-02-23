@@ -2,7 +2,7 @@
 
 ## Overview
 
-EEGC (English Essay Guidance Companion) is an AI-powered language learning assistant built for HKBU (Hong Kong Baptist University). The application helps students improve their English essay writing through structured three-step revision guidance. It supports three modes: Briefing (introduction/setup), Training (practice with sample essays), and Assessment (formal evaluation). The system manages student and teacher accounts, stores learning reports, and generates PDF/Markdown exports of learning sessions.
+EEGC (Enhancing English through Global Citizenship, LANG 0036) is an AI-powered language learning assistant built for HKBU (Hong Kong Baptist University). The application helps students improve their English essay writing through structured three-step revision guidance. It supports three modes: Briefing (introduction/setup), Training (practice with sample essays), and Assessment (formal evaluation). The system manages student and teacher accounts, stores learning reports, and generates PDF/Markdown exports of learning sessions.
 
 ## User Preferences
 

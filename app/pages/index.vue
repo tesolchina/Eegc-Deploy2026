@@ -1,6 +1,6 @@
 <script setup lang="ts">
 useHead({
-  title: 'EEGC - English Essay Guidance Companion'
+  title: 'EEGC - Enhancing English through Global Citizenship'
 })
 </script>
 
@@ -9,15 +9,16 @@ useHead({
     <div class="max-w-4xl mx-auto px-4 py-16">
       <div class="text-center mb-12">
         <h1 class="text-5xl font-extrabold text-indigo-600 mb-4">EEGC</h1>
-        <p class="text-xl text-gray-600">English Essay Guidance Companion</p>
+        <p class="text-xl text-gray-600">Enhancing English through Global Citizenship</p>
+        <p class="text-sm text-gray-400 mt-2">LANG 0036</p>
       </div>
 
       <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-4">About This Platform</h2>
         <p class="text-gray-600 leading-relaxed mb-4">
-          EEGC is an AI-powered English writing assistant designed for HKBU students.
-          It provides step-by-step revision guidance to help you improve your academic essays
-          through interactive feedback and structured learning.
+          EEGC is an AI-powered English writing assistant designed for HKBU students
+          taking LANG 0036. It provides step-by-step revision guidance to help you improve
+          your academic essays through interactive feedback and structured learning.
         </p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
           <div class="bg-indigo-50 rounded-xl p-4 text-center">
