@@ -25,7 +25,7 @@ Preferred communication style: Simple, everyday language.
   - `learning_reports`: Stores chat histories, ratings, and AI-generated contribution analysis
   - `students`: Registration data with unique ID generation (suffix + name prefix + random code)
   - `teachers`: Email-based accounts with plaintext passwords (acknowledged limitation)
-  - `student_whitelist`: Controls which students can register
+  - `student_whitelist`: Controls which students can register (currently bypassed - open registration)
 
 ### AI Integration
 - **Poe API** (OpenAI-compatible format): Server-side API key management eliminates need for students to provide keys
@@ -40,8 +40,13 @@ Preferred communication style: Simple, everyday language.
   - `useApiConnection`: Connection testing and status management
 
 ### Key Pages
-- `/` - Landing page with login options
-- `/eegc` - Main application interface with mode switching, chat, and report generation
+- `/` - Landing page with platform info and link to AI Edit module
+- `/aiedit` - Student login portal (choose existing ID or sign up)
+- `/aiedit/signup` - Student registration form
+- `/aiedit/eegc` - Main application interface with mode switching, chat, and report generation
+- `/teacher` - Teacher login portal (hidden, no link from public pages)
+- `/teacher/dashboard` - Teacher dashboard for viewing reports
+- `/admin/setup` - Admin page for populating student whitelist data
 
 ## External Dependencies
 
