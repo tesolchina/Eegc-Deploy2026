@@ -40,6 +40,22 @@ export const TEACHER_ACCOUNTS: TeacherAccount[] = [
     sections: [1, 2, 3],
     is_active: true,
   },
+  {
+    email: 'zhang_kt@hkbu.edu.hk',
+    password: 'EEGC@Zhang2026!',
+    name: 'Zhang KT (Super Admin)',
+    role: 'superadmin',
+    sections: [1, 2, 3],
+    is_active: true,
+  },
+  {
+    email: '22256342@life.hkbu.edu.hk',
+    password: 'EEGC@22256342!',
+    name: '22256342 (Super Admin)',
+    role: 'superadmin',
+    sections: [1, 2, 3],
+    is_active: true,
+  },
 ]
 
 export function findTeacher(email: string, password: string): TeacherAccount | undefined {
