@@ -74,22 +74,12 @@ const handleSubmit = async () => {
         }
     } catch (error: any) {
         console.error('Signup error:', error)
-        if (error.statusMessage === 'NOT_IN_WHITELIST' || error.data?.statusMessage === 'NOT_IN_WHITELIST') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Registration Not Allowed',
-                html: 'Your student number is not in the authorized list.<br><br>Please contact your teacher or administrator to be added to the system.',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#4f46e5'
-            })
-        } else {
-            Swal.fire({
+        Swal.fire({
                 icon: 'error',
                 title: 'Registration Failed',
-                text: error.statusMessage || 'An error occurred during registration. Please try again.',
+                text: error.statusMessage || error.data?.statusMessage || 'An error occurred during registration. Please try again.',
                 confirmButtonColor: '#4f46e5'
             })
-        }
     } finally {
         isSubmitting.value = false
     }
