@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
         const decoded = jwt.verify(token, config.jwtSecret) as any
 
         // Role check
-        if (expectedRole === 'teacher' && decoded.role !== 'teacher') {
+        if (expectedRole === 'teacher' && decoded.role !== 'teacher' && decoded.role !== 'superadmin') {
             throw createError({
                 statusCode: 403,
                 statusMessage: `Forbidden: Teacher role required.`,

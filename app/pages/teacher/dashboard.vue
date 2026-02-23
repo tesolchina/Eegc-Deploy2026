@@ -8,6 +8,13 @@ useHead({
 
 const isAuthChecked = ref(false)
 
+interface TeacherInfo {
+    email: string
+    name: string
+    role: 'teacher' | 'superadmin'
+    sections: number[]
+}
+
 interface Report {
     id: string
     created_at: string
@@ -22,6 +29,7 @@ interface Report {
     metadata: any
 }
 
+const teacherInfo = ref<TeacherInfo | null>(null)
 const activeView = ref<'roster' | 'reports'>('roster')
 const reports = ref<Report[]>([])
 const isLoading = ref(true)
@@ -36,6 +44,9 @@ const duplicates = ref<any[]>([])
 const isCheckingDuplicates = ref(false)
 const showDuplicateModal = ref(false)
 
+const allowedSections = computed(() => teacherInfo.value?.sections || [1, 2, 3])
+const isSuperAdmin = computed(() => teacherInfo.value?.role === 'superadmin')
+
 const stats = computed(() => {
     const total = reports.value.length
     const assessmentReports = reports.value.filter(r => r.mode === 'assessment')
@@ -48,6 +59,21 @@ const stats = computed(() => {
 
     return { total, avgRating, trainingCount, assessmentCount }
 })
+
+const fetchTeacherInfo = async () => {
+    try {
+        const response = await $fetch<{ success: boolean, teacher: TeacherInfo }>('/api/teacher/me')
+        if (response.success) {
+            teacherInfo.value = response.teacher
+        }
+    } catch (error: any) {
+        console.error('Error fetching teacher info:', error)
+        if (error.statusCode === 401) {
+            localStorage.removeItem('userStatus')
+            navigateTo('/teacher')
+        }
+    }
+}
 
 const fetchReports = async () => {
     isLoading.value = true
@@ -78,6 +104,7 @@ const handleLogout = () => {
     }).then((result) => {
         if (result.isConfirmed) {
             localStorage.removeItem('userStatus')
+            $fetch('/api/teacher/logout', { method: 'POST' }).catch(() => {})
             navigateTo('/teacher')
         }
     })
@@ -115,12 +142,14 @@ const checkDuplicates = async () => {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     const userStatus = localStorage.getItem('userStatus')
     if (userStatus !== 'teacher') {
         navigateTo('/teacher')
         return
     }
+    await fetchTeacherInfo()
+    if (!teacherInfo.value) return
     isAuthChecked.value = true
     fetchReports()
 })
@@ -143,6 +172,11 @@ onMounted(() => {
                         </h1>
                     </div>
                     <div class="flex items-center space-x-4">
+                        <div v-if="teacherInfo" class="text-sm text-slate-500 hidden md:block">
+                            <span class="font-semibold text-slate-700">{{ teacherInfo.name }}</span>
+                            <span v-if="isSuperAdmin" class="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700">Admin</span>
+                            <span v-else class="ml-2 text-xs text-slate-400">Sec {{ allowedSections.join(', ') }}</span>
+                        </div>
                         <button @click="handleLogout"
                             class="flex items-center space-x-2 px-4 py-2 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all font-medium text-sm">
                             <span>Sign Out</span>
@@ -166,7 +200,7 @@ onMounted(() => {
                 </div>
             </div>
 
-            <TeacherDashboardStats :stats="stats" />
+            <TeacherDashboardStats :stats="stats" :allowed-sections="allowedSections" />
 
             <div class="flex space-x-1 mb-6 bg-slate-100 rounded-xl p-1 w-fit">
                 <button
@@ -198,6 +232,7 @@ onMounted(() => {
             <TeacherStudentRoster
                 v-if="activeView === 'roster'"
                 :reports="reports"
+                :allowed-sections="allowedSections"
                 @view-student="viewStudent"
             />
 

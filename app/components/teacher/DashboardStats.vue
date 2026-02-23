@@ -8,9 +8,15 @@ const props = defineProps<{
         trainingCount: number
         assessmentCount: number
     }
+    allowedSections?: number[]
 }>()
 
-const totalStudents = STUDENT_ROSTER.length
+const totalStudents = computed(() => {
+    if (props.allowedSections && props.allowedSections.length > 0) {
+        return STUDENT_ROSTER.filter(s => props.allowedSections!.includes(s.section)).length
+    }
+    return STUDENT_ROSTER.length
+})
 </script>
 
 <template>

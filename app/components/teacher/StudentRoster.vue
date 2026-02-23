@@ -17,6 +17,7 @@ interface Report {
 
 const props = defineProps<{
     reports: Report[]
+    allowedSections?: number[]
 }>()
 
 const emit = defineEmits<{
@@ -25,9 +26,23 @@ const emit = defineEmits<{
 
 const selectedSection = ref<number | null>(null)
 
+const visibleSections = computed(() => {
+    if (props.allowedSections && props.allowedSections.length > 0) {
+        return SECTIONS.filter(s => props.allowedSections!.includes(s))
+    }
+    return [...SECTIONS]
+})
+
+const rosterStudents = computed(() => {
+    if (props.allowedSections && props.allowedSections.length > 0) {
+        return STUDENT_ROSTER.filter(s => props.allowedSections!.includes(s.section))
+    }
+    return STUDENT_ROSTER
+})
+
 const filteredStudents = computed(() => {
-    if (selectedSection.value === null) return STUDENT_ROSTER
-    return STUDENT_ROSTER.filter(s => s.section === selectedSection.value)
+    if (selectedSection.value === null) return rosterStudents.value
+    return rosterStudents.value.filter(s => s.section === selectedSection.value)
 })
 
 const reportsByStudent = computed(() => {
@@ -67,8 +82,8 @@ function getSubmissionStatus(suffix: number): 'none' | 'training' | 'complete' {
 }
 
 const sectionStats = computed(() => {
-    return SECTIONS.map(sec => {
-        const students = STUDENT_ROSTER.filter(s => s.section === sec)
+    return visibleSections.value.map(sec => {
+        const students = rosterStudents.value.filter(s => s.section === sec)
         const withSubmissions = students.filter(s => getStudentReports(s.studentNumberSuffix).length > 0).length
         return { section: sec, total: students.length, submitted: withSubmissions }
     })
@@ -88,7 +103,7 @@ const sectionStats = computed(() => {
                 ]"
                 data-testid="filter-all-sections"
             >
-                All Sections ({{ STUDENT_ROSTER.length }})
+                All Sections ({{ rosterStudents.length }})
             </button>
             <button
                 v-for="stat in sectionStats"

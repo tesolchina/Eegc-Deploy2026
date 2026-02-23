@@ -27,7 +27,7 @@ const handleLogin = async () => {
     isLoggingIn.value = true
 
     try {
-        const response = await $fetch<{ success: boolean, teacher: { email: string, id: string } }>('/api/teacher/login', {
+        const response = await $fetch<{ success: boolean, teacher: { email: string, name: string, role: string, sections: number[] } }>('/api/teacher/login', {
             method: 'POST',
             body: {
                 email: email.value.trim(),
@@ -40,7 +40,7 @@ const handleLogin = async () => {
             Swal.fire({
                 icon: 'success',
                 title: 'Login Successful',
-                text: `Welcome back, ${response.teacher.email}!`,
+                text: `Welcome back, ${response.teacher.name}!`,
                 timer: 1500,
                 showConfirmButton: false
             })
