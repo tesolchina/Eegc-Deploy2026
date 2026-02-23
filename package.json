@@ -19,6 +19,7 @@
     "markdown-it": "^14.1.0",
     "nuxt": "^4.3.0",
     "openai": "^6.17.0",
+    "resend": "^4.0.0",
     "sweetalert2": "^11.26.17",
     "vue": "^3.5.27",
     "vue-router": "^4.6.4"
