@@ -29,7 +29,7 @@ export function useApiConnection({ model, showNotification, talkToChatbot }) {
     } catch (error) {
       isConnected.value = false
       if (error.message && error.message.includes('Unauthorized')) {
-        return navigateTo('/')
+        return navigateTo('/aiedit')
       }
       Swal.fire({
         title: 'Connection Failed',

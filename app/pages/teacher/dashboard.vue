@@ -58,7 +58,7 @@ const fetchReports = async () => {
     } catch (error: any) {
         console.error('Error fetching reports:', error)
         if (error.statusCode === 401) {
-            navigateTo('/teacher/login')
+            navigateTo('/teacher')
         }
     } finally {
         isLoading.value = false
@@ -77,7 +77,7 @@ const handleLogout = () => {
     }).then((result) => {
         if (result.isConfirmed) {
             localStorage.removeItem('userStatus')
-            navigateTo('/')
+            navigateTo('/teacher')
         }
     })
 }
@@ -109,7 +109,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <AuthGuard />
+    <AuthGuard redirect-to="/teacher" />
     <div class="min-h-screen bg-slate-50 font-sans text-slate-900">
         <!-- Navigation Bar -->
         <nav class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">

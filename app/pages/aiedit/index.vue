@@ -22,7 +22,7 @@ const handleExistingId = () => {
 }
 
 const handleNewId = () => {
-    navigateTo('/student/signup')
+    navigateTo('/aiedit/signup')
 }
 
 const handleLogin = async () => {
@@ -58,7 +58,7 @@ const handleLogin = async () => {
 
             // Redirect to student dashboard
             setTimeout(() => {
-                navigateTo('/eegc')
+                navigateTo('/aiedit/eegc')
             }, 1500)
         }
     } catch (error: any) {
@@ -136,7 +136,7 @@ const handleLogin = async () => {
                 <div class="pt-2 text-center">
                     <button @click="goBack"
                         class="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors flex items-center justify-center mx-auto">
-                        <span class="mr-1">←</span> {{ showLoginForm ? 'Change Option' : 'Back to Role Selection' }}
+                        <span class="mr-1">←</span> {{ showLoginForm ? 'Change Option' : 'Back to Home' }}
                     </button>
                 </div>
             </div>

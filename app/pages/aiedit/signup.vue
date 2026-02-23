@@ -15,7 +15,7 @@ const isSubmitting = ref(false)
 const generatedCode = ref('')
 
 const goBack = () => {
-    navigateTo('/student/login')
+    navigateTo('/aiedit')
 }
 
 const handleSubmit = async () => {

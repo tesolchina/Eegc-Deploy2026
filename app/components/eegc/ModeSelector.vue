@@ -72,6 +72,6 @@ const selectMode = (mode) => {
 
 const handleLogout = () => {
   localStorage.removeItem("userStatus");
-  navigateTo("/");
+  navigateTo("/aiedit");
 };
 </script>

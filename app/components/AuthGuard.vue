@@ -1,13 +1,18 @@
 <script setup lang="ts">
+const props = withDefaults(defineProps<{
+    redirectTo?: string
+}>(), {
+    redirectTo: '/aiedit'
+})
+
 onMounted(() => {
     const userStatus = localStorage.getItem('userStatus')
     if (userStatus !== 'student' && userStatus !== 'teacher') {
-        navigateTo('/')
+        navigateTo(props.redirectTo)
     }
 })
 </script>
 
 <template>
-    <!-- AuthGuard Component: Performs client-side auth check -->
     <div style="display: none;"></div>
 </template>

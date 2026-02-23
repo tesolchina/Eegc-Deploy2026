@@ -10,7 +10,7 @@ const password = ref('')
 const isLoggingIn = ref(false)
 
 const goBack = () => {
-    navigateTo('/')
+    navigateTo('/teacher')
 }
 
 const handleLogin = async () => {
@@ -100,15 +100,11 @@ const handleLogin = async () => {
                     </button>
                 </form>
 
-                <div class="pt-2 text-center space-y-4">
+                <div class="pt-2 text-center">
                     <p class="text-sm text-gray-500">
                         Don't have an account? Please contact <span class="font-semibold text-indigo-600">Simon</span>
                         to register.
                     </p>
-                    <button @click="goBack"
-                        class="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors flex items-center justify-center mx-auto">
-                        <span class="mr-1">←</span> Back to Role Selection
-                    </button>
                 </div>
             </div>
         </div>

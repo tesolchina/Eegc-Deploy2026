@@ -154,7 +154,7 @@ const talkToChatbot = async (history) => {
     return await _talkToChatbot(history)
   } catch (error) {
     if (error.statusCode === 401 || (error.message && error.message.includes('Unauthorized'))) {
-      return navigateTo('/')
+      return navigateTo('/aiedit')
     }
     throw error
   }
@@ -165,7 +165,7 @@ const sendMessage = async () => {
     await _sendMessage()
   } catch (error) {
     if (error.statusCode === 401 || (error.message && error.message.includes('Unauthorized'))) {
-      return navigateTo('/')
+      return navigateTo('/aiedit')
     }
   }
 }
