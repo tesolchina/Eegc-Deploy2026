@@ -145,7 +145,7 @@ const handleSubmit = async () => {
                             data-testid="select-section"
                             required>
                             <option value="" disabled>Select your section</option>
-                            <option v-for="n in 10" :key="n" :value="String(n)">Section {{ n }}</option>
+                            <option v-for="n in 3" :key="n" :value="String(n)">Section {{ n }}</option>
                         </select>
                     </div>
 

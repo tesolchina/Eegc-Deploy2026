@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     supabaseUrl: process.env.SUPABASE_URL || '',
     supabaseKey: process.env.SUPABASE_PUBLISHABLE_KEY || '',
     jwtSecret: process.env.JWT_SECRET || 'F6ucvnzSYQofmivdyxehpa7Te3nWlgIyxeh',
+    adminKey: process.env.ADMIN_KEY || 'eegc-admin-2026',
   },
   devtools: { enabled: true },
   vite: {
