@@ -69,3 +69,8 @@ Preferred communication style: Simple, everyday language.
 | `SUPABASE_URL` | Database connection |
 | `SUPABASE_PUBLISHABLE_KEY` | Database authentication |
 | `JWT_SECRET` | Token signing (has default fallback) |
+
+## Known Issues & Notes
+
+### Gmail MIME Encoding
+When sending emails via the Gmail API with raw MIME messages, **email subject lines must be ASCII-only** or properly encoded using RFC 2047 (`=?UTF-8?B?<base64>?=`). Non-ASCII characters like em dashes (—), curly quotes, or accented letters will appear garbled (e.g., `Ã¢Â€Â"`) if placed directly in the `Subject:` header. The `encodeSubject()` helper in `server/utils/gmail.ts` handles this automatically. For standalone scripts, use the same pattern or stick to plain ASCII in subjects.

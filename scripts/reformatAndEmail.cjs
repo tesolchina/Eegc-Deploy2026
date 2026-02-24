@@ -196,6 +196,17 @@ Assessment rubric used for grading:
   console.log('Doc reformatted successfully!');
 }
 
+// IMPORTANT: Email subject lines only support ASCII in raw MIME headers.
+// Non-ASCII characters (em dash —, curly quotes, accented letters, etc.)
+// will appear garbled. Either:
+//   1. Use only plain ASCII in subjects (replace — with -, etc.)
+//   2. Or encode with RFC 2047: =?UTF-8?B?<base64>?=
+function encodeSubject(subject) {
+  if (/^[\x20-\x7E]*$/.test(subject)) return subject;
+  const encoded = Buffer.from(subject, 'utf-8').toString('base64');
+  return `=?UTF-8?B?${encoded}?=`;
+}
+
 async function sendEmails() {
   const gmail = await getGmailClient();
 
@@ -206,7 +217,9 @@ async function sendEmails() {
     { email: 'zhang_kt@hkbu.edu.hk', name: 'Kaitai' },
   ];
 
-  const subject = 'EEGC AI Edit Module — Meeting Tomorrow (25 Feb)';
+  // NOTE: Email subjects with non-ASCII characters (em dash, curly quotes, etc.)
+  // must be RFC 2047 encoded. Use encodeSubject() helper below.
+  const subject = 'EEGC AI Edit Module - Meeting Tomorrow (25 Feb)';
 
   const htmlBody = `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 650px;">
   <p>Hi everyone,</p>
@@ -241,7 +254,7 @@ async function sendEmails() {
     try {
       const messageParts = [
         `To: ${r.email}`,
-        `Subject: ${subject}`,
+        `Subject: ${encodeSubject(subject)}`,
         'MIME-Version: 1.0',
         'Content-Type: text/html; charset=utf-8',
         '',

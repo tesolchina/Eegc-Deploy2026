@@ -48,12 +48,18 @@ export async function getGmailClient() {
   return google.gmail({ version: 'v1', auth: oauth2Client })
 }
 
+function encodeSubject(subject: string): string {
+  if (/^[\x20-\x7E]*$/.test(subject)) return subject
+  const encoded = Buffer.from(subject, 'utf-8').toString('base64')
+  return `=?UTF-8?B?${encoded}?=`
+}
+
 export async function sendEmail(to: string, subject: string, htmlBody: string) {
   const gmail = await getGmailClient()
 
   const messageParts = [
     `To: ${to}`,
-    `Subject: ${subject}`,
+    `Subject: ${encodeSubject(subject)}`,
     'MIME-Version: 1.0',
     'Content-Type: text/html; charset=utf-8',
     '',
