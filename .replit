@@ -66,4 +66,4 @@ SUPABASE_URL = "https://idmivdyxedmfflobkspf.supabase.co"
 SUPABASE_PUBLISHABLE_KEY = "sb_publishable_c6Kif4JsswryKLlgInzSYQ_VudP7HqU"
 
 [agent]
-integrations = ["resend:1.0.0", "google-mail:1.0.0"]
+integrations = ["resend:1.0.0", "google-mail:1.0.0", "google-docs:1.0.0"]
