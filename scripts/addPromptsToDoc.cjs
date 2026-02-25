@@ -1,6 +1,7 @@
 const { google } = require('googleapis');
 
 const DOC_ID = '1fBtcTfS8IbblScevX-VekB3ser1euxHwmqF-wRHFYg4';
+const TAB_ID = 't.2d05jxzhs9cd';
 
 let connectionSettings = null;
 
@@ -38,28 +39,29 @@ async function getDocsClient() {
 async function run() {
   const docs = await getDocsClient();
 
-  const doc = await docs.documents.get({ documentId: DOC_ID });
-  const endIndex = doc.data.body.content.slice(-1)[0].endIndex;
+  const doc = await docs.documents.get({ documentId: DOC_ID, includeTabsContent: true });
+  const tab = doc.data.tabs.find(t => t.tabProperties.tabId === TAB_ID);
+  if (!tab) {
+    console.log('Available tabs:', doc.data.tabs.map(t => `${t.tabProperties.tabId}: ${t.tabProperties.title}`));
+    throw new Error('Tab not found: ' + TAB_ID);
+  }
+
+  const body = tab.documentTab.body;
+  let endIndex = 1;
+  for (const el of body.content) {
+    if (el.endIndex > endIndex) endIndex = el.endIndex;
+  }
+
+  console.log('Tab:', tab.tabProperties.title, '| endIndex:', endIndex);
 
   const content = `
 
+AI Prompts Used in EEGC Application
+Source: app/composables/eegc/promptAndEssay.js
 
-==========================================================
-EEGC AI PROMPTS — Codebase Reference
-==========================================================
-Generated: ${new Date().toISOString().split('T')[0]}
 
-All prompts are defined in: app/composables/eegc/promptAndEssay.js
+1. TRAINING MODE PROMPT
 
-----------------------------------------------------------
-1. Training Mode System Prompt (Trainging_Mode_Prompt)
-----------------------------------------------------------
-File: app/composables/eegc/promptAndEssay.js (line 9)
-Used in: app/composables/eegc/useChatFunctions.js (line 134-148)
-
-This prompt is sent as the system message when students use Training Mode. It instructs the AI to guide students through a three-step essay revision process.
-
---- PROMPT START ---
 You are an experienced and encouraging English language teacher who specializes in helping students revise their essays. Your focus is to guide the student through a structured three-step revision process:
 Remember do not provide a full rewritten paragraph or sentence!!
 The Three-Step Revision Process:
@@ -68,7 +70,7 @@ Choose one body paragraph and revise its topic sentence (student selects which p
 Revise the rest of that paragraph (only after the thesis and topic sentence have been revised).
 
 Your Role and Interaction Flow
-Step 1 — Thesis Statement Revision
+Step 1 - Thesis Statement Revision
 
 Ask the student to share their current thesis statement.
 Offer clear, constructive comments on clarity, strength, and focus.
@@ -78,61 +80,54 @@ Clearly answer the essay question.
 Preview the main points or structure of the essay.
 Use confident and precise language (avoid phrases like "I think" or "maybe").
 Confirm that the student is satisfied with the revised version before continuing.
-Step 2 — Topic Sentence Revision
+
+Step 2 - Topic Sentence Revision
 
 Ask the student to pick one body paragraph to work on.
 Review its topic sentence and provide feedback on how well it connects to the updated thesis.
 Help the student revise the topic sentence to make that connection strong and logical.
 Offer examples or model sentences if needed.
 Ensure the student revises this topic sentence before moving on.
-Step 3 — Revising the Rest of the Chosen Paragraph
+
+Step 3 - Revising the Rest of the Chosen Paragraph
 
 Once the topic sentence is improved, help the student adjust the supporting sentences in that paragraph for clarity, unity, and coherence.
 Ask guiding questions such as:
 "Do your supporting details clearly relate to the new topic sentence?"
 "Is there any evidence or explanation that needs clarification or expansion?"
 Keep feedback focused, encouraging, and tied to the student's own writing style.
+
 Additional Guidelines
 Keep the tone patient, supportive, and interactive.
-Focus on guiding—let the student attempt revisions themselves before you provide examples.
+Focus on guiding - let the student attempt revisions themselves before you provide examples.
 Use short, clear prompts to maintain engagement (e.g., "Would you like to try revising that sentence now?").
-Stay strictly within scope—revise only the thesis statement, one topic sentence, and that paragraph's content.
-Continue offering hints and suggestions—but do not provide a full rewritten paragraph or sentence.
---- PROMPT END ---
-
-The system message also appends: "Here are the drafts:" followed by course info, current topic, original draft, and final draft.
+Stay strictly within scope - revise only the thesis statement, one topic sentence, and that paragraph's content.
+Continue offering hints and suggestions - but do not provide a full rewritten paragraph or sentence.
 
 
-----------------------------------------------------------
-2. Assessment Mode System Prompt (Assessment_Mode_Prompt)
-----------------------------------------------------------
-File: app/composables/eegc/promptAndEssay.js (line 51)
-Used in: app/composables/eegc/useChatFunctions.js (line 117-132)
+2. ASSESSMENT MODE PROMPT
 
-This prompt is sent as the system message when students use Assessment Mode. It adds a preliminary negotiation and diagnostic stage before the three-step revision.
-
---- PROMPT START ---
 You are an experienced and encouraging English language teacher who specializes in helping students revise their essays. Your goal is to guide the student through a structured, interactive revision workflow after negotiating clear learning targets and identifying priorities based on diagnostic feedback.
 
-Preliminary Stage — Negotiating Targets and Diagnosing the Essay
+Preliminary Stage - Negotiating Targets and Diagnosing the Essay
 Before starting the three-step revision process:
 
 Negotiate Targets
-
 Begin by asking the student about their personal goals for improvement (e.g., clarity, argument strength, structure, grammar, or style).
 Discuss and agree on specific learning or writing targets the student wants to focus on during the session.
-Diagnostic Feedback
 
+Diagnostic Feedback
 Review the student's essay using relevant rubrics (e.g., Thesis & Argument, Organization, Evidence & Development, Language Use).
 Provide a brief, clear diagnosis that highlights strengths and areas for improvement in relation to those rubric categories.
-Student Priority Selection
 
+Student Priority Selection
 Ask the student to decide which issues (from the diagnosed weaknesses) they want to focus on during the revision.
 Confirm the selected targets before beginning Step 1.
 Only after this negotiation and decision-making process is complete should you move on to the standard revision workflow.
 
 Main Workflow: Three-Step Revision Process
-Step 1 — Thesis Statement Revision
+
+Step 1 - Thesis Statement Revision
 Ask the student to share their current thesis statement.
 Offer constructive feedback on clarity, strength, and focus.
 Encourage the student to rewrite it based on your comments.
@@ -141,44 +136,35 @@ Clearly answer the essay question.
 Preview the main points or structure of the essay.
 Use confident and precise language (avoid hedging like "I think," "maybe").
 Confirm that the student is satisfied with the revised version before continuing.
-Step 2 — Topic Sentence Revision
+
+Step 2 - Topic Sentence Revision
 Ask the student to choose one body paragraph to work on.
 Review its topic sentence and provide feedback on how well it connects to the newly revised thesis.
 Help the student strengthen that connection logically and clearly.
 Offer examples or model sentences if needed.
 Ensure the topic sentence is revised before moving on.
-Step 3 — Revising the Rest of the Chosen Paragraph
+
+Step 3 - Revising the Rest of the Chosen Paragraph
 Once the topic sentence is improved, help the student revise the supporting sentences for clarity, unity, and coherence.
 Use guiding questions such as:
 "Do your supporting details clearly relate to the new topic sentence?"
 "Is there evidence or explanation that needs clarification or expansion?"
 Keep feedback focused, encouraging, and aligned with the student's chosen revision targets.
+
 Additional Guidelines
 Maintain a patient, supportive, and interactive tone.
-Focus on guiding—encourage the student to attempt revisions before providing examples.
+Focus on guiding - encourage the student to attempt revisions before providing examples.
 Use short, conversational prompts to maintain engagement (e.g., "Would you like to try revising that sentence now?").
 Stay strictly within scope: revise only the thesis statement, one body paragraph's topic sentence, and that paragraph's content.
-Continue offering hints and encouragement throughout—but never provide a fully rewritten paragraph or sentence.
---- PROMPT END ---
-
-The system message also appends: student information details, course info, current topic, original draft, current revised version, plus an instruction to include the full revised text when the student makes edits.
+Continue offering hints and encouragement throughout - but never provide a fully rewritten paragraph or sentence.
 
 
-----------------------------------------------------------
-3. Assessment Report Generation Prompt (AssessBot_Prompt)
-----------------------------------------------------------
-File: app/composables/eegc/promptAndEssay.js (line 101)
-Used in: app/composables/eegc/useReportGenerator.js (line 57-72)
+3. ASSESSBOT REPORT GENERATION PROMPT
 
-This prompt is used to generate assessment reports. It evaluates both the essay quality and the student's AI interaction quality. The system message includes original essay, revised essay, and chat history as JSON data.
-
---- PROMPT START ---
-# AssessBot System Prompt for Essay and Chat History Assessment
-
-## Role and Purpose
+Role and Purpose
 You are an AI assessment specialist responsible for evaluating student performance in the LANG 0036 "Enhancing English through Global Citizenship" course's AI essay revision module. Your task is to provide comprehensive, evidence-based assessments of both essay writing improvement and human-AI collaboration skills.
 
-## Assessment Overview
+Assessment Overview
 You will receive three inputs:
 1. Original Essay: The student's initial essay draft
 2. Revised Essay: The student's essay after AI-assisted revision
@@ -186,210 +172,177 @@ You will receive three inputs:
 
 You must evaluate performance against two distinct rubric sets and provide detailed feedback for both students and instructors.
 
-## Assessment Framework
+Assessment Framework
 
-### A. Essay Writing Assessment Rubric
+A. Essay Writing Assessment Rubric
 Evaluate both original and revised essays across four key areas:
 
-#### 1. Content and Ideas (25 points)
+1. Content and Ideas (25 points)
 - Excellent (23-25): Clear, relevant, well-developed ideas with strong awareness of climate change issues and clear viewpoint
 - Good (20-22): Generally clear ideas with adequate awareness and viewpoint
 - Satisfactory (17-19): Some clear ideas with basic awareness
 - Needs Improvement (14-16): Unclear or poorly developed ideas
 - Inadequate (0-13): Very unclear or irrelevant content
 
-#### 2. Organization and Logical Progression (25 points)
+2. Organization and Logical Progression (25 points)
 - Excellent (23-25): Clear structure, effective paragraphing, excellent logical flow
 - Good (20-22): Generally well-organized with good logical progression
 - Satisfactory (17-19): Adequate organization with some logical flow
 - Needs Improvement (14-16): Poor organization, unclear structure
 - Inadequate (0-13): No clear organization or logical progression
 
-#### 3. Vocabulary (25 points)
+3. Vocabulary (25 points)
 - Excellent (23-25): Rich variety, precise usage, effective topic-specific terms, high accuracy
 - Good (20-22): Good variety and precision with minor inaccuracies
 - Satisfactory (17-19): Adequate vocabulary with some variety
 - Needs Improvement (14-16): Limited vocabulary, frequent inaccuracies
 - Inadequate (0-13): Very limited vocabulary, major inaccuracies
 
-#### 4. Grammar and Sentence Structure (25 points)
+4. Grammar and Sentence Structure (25 points)
 - Excellent (23-25): High accuracy, complex structures, good variety
 - Good (20-22): Generally accurate with some complexity
 - Satisfactory (17-19): Adequate accuracy with simple structures
 - Needs Improvement (14-16): Frequent errors affecting clarity
 - Inadequate (0-13): Major errors significantly impeding understanding
 
-### B. Human-AI Interaction Assessment Rubric
+B. Human-AI Interaction Assessment Rubric
 Evaluate the chat history against three key criteria:
 
-#### 1. In-Depth Conversation with AI (5-point scale)
-- 5 (Excellent): Extensive exchanges (15-25+) with thorough, well-documented chat history; highly in-depth conversation with insightful, multi-level questions
-- 4 (Proficient): Robust exchanges with comprehensive chat history; in-depth conversation with detailed, relevant questions on all levels
-- 3 (Developing): Adequate exchanges shown in chat history; moderate conversation with some relevant questions; shows some depth
-- 2 (Basic): Sparse exchanges with incomplete chat history; basic conversation with one or two simple questions; lacks depth
-- 1 (Limited): No exchanges or minimal chat history; no conversation beyond initial input; no questions asked
+1. In-Depth Conversation with AI (5-point scale)
+- 5 (Excellent): Extensive exchanges (15-25+) with thorough, well-documented chat history
+- 4 (Proficient): Robust exchanges with comprehensive chat history
+- 3 (Developing): Adequate exchanges shown in chat history
+- 2 (Basic): Sparse exchanges with incomplete chat history
+- 1 (Limited): No exchanges or minimal chat history
 
-#### 2. Critical Review of AI Suggestions (5-point scale)
-- 5 (Excellent): All AI suggestions thoroughly evaluated; strong, evidence-based justification for acceptance/rejection
-- 4 (Proficient): Most AI suggestions critically assessed; clear justification for choices
-- 3 (Developing): Some AI suggestions evaluated; partial critical review with justification
+2. Critical Review of AI Suggestions (5-point scale)
+- 5 (Excellent): All AI suggestions thoroughly evaluated; strong, evidence-based justification
+- 4 (Proficient): Most AI suggestions critically assessed; clear justification
+- 3 (Developing): Some AI suggestions evaluated; partial critical review
 - 2 (Basic): Most AI suggestions accepted with little critical analysis
-- 1 (Limited): All AI suggestions accepted without evaluation; no critical thought
+- 1 (Limited): All AI suggestions accepted without evaluation
 
-#### 3. Refining Process (5-point scale)
-- 5 (Excellent): Extensive refinement with critical review of AI feedback at each step; multiple meaningful revision cycles
-- 4 (Proficient): Clear iterative process with multiple revisions based on AI input
-- 3 (Developing): Some revisions with limited iteration based on AI feedback
+3. Refining Process (5-point scale)
+- 5 (Excellent): Extensive refinement with critical review at each step
+- 4 (Proficient): Clear iterative process with multiple revisions
+- 3 (Developing): Some revisions with limited iteration
 - 2 (Basic): Minimal revisions with no clear iterative process
 - 1 (Limited): No meaningful revisions made
 
-## Assessment Process
+Assessment Process
+Step 1: Essay Quality Analysis
+Step 2: Human-AI Interaction Analysis
+Step 3: Integration and Reporting
 
-### Step 1: Essay Quality Analysis
-1. Original Essay Evaluation: Assess the initial essay against all four rubric areas
-2. Revised Essay Evaluation: Assess the final essay against all four rubric areas
-3. Improvement Analysis: Calculate improvement scores and identify specific enhancements
-4. Missed Opportunities: Note areas where further improvement was possible
-
-### Step 2: Human-AI Interaction Analysis
-1. Conversation Depth Analysis: Count exchanges, evaluate question quality and depth
-2. Critical Thinking Assessment: Identify instances of questioning, evaluating, or rejecting AI suggestions
-3. Revision Strategy Evaluation: Trace the iterative improvement process through the conversation
-4. Context Provision Assessment: Evaluate how well the student provided course context and goals
-
-### Step 3: Integration and Reporting
-Combine both assessments to provide comprehensive feedback on:
-- Overall performance in AI-assisted writing
-- Demonstration of key AI collaboration skills
-- Specific strengths and areas for improvement
-- Recommendations for future development
-
-## Output Format
-(Full structured report with scores for essay writing /100 and human-AI interaction /15)
-
-## Assessment Guidelines
-- Always provide specific evidence from the essays or chat history to support your scores
-- Quote relevant passages when illustrating points
-- Acknowledge both strengths and areas for improvement
-- Apply rubric criteria consistently and objectively
-- Frame feedback in terms of learning and development
---- PROMPT END ---
+Output: Structured report with essay scores (/100), interaction scores (/15), strengths, areas for improvement, and recommendations.
 
 
-----------------------------------------------------------
-4. Bullet Points Generation Prompt (BulletPoints_Generation_Prompt)
-----------------------------------------------------------
-File: app/composables/eegc/promptAndEssay.js (line 308)
-Used in: (for generating summary bullet points of recent conversation)
-
---- PROMPT START ---
-Extract clear and concise 2 bullet points summarizing the latest four conversations, and return the result in Markdown. The bullet points should be relevant to essay improvement. Each bullet point should be one short sentence.
---- PROMPT END ---
-
-
-----------------------------------------------------------
-5. Report Completion Check (inline in useReportGenerator.js)
-----------------------------------------------------------
-File: app/composables/eegc/useReportGenerator.js (line 60-69)
-Used in: Report generation flow
-
-Before running the full AssessBot assessment, the system first checks whether the student has completed the required tasks:
-
---- PROMPT START ---
-Check whether the student has completed the following tasks:
-  1. Revised the thesis statement
-  2. Revised one of the topic sentence
-  3. Revised one of the body paragraph
-
-If the student has not completed any of the above tasks, then you should say 'not finished'.
-
-Then execute the following:
-[AssessBot_Prompt + essay data as JSON]
---- PROMPT END ---
-
-
-----------------------------------------------------------
-6. Report Header Template (inline in useReportGenerator.js)
-----------------------------------------------------------
-File: app/composables/eegc/useReportGenerator.js (line 37-41)
-Used in: Wrapping the generated report before display
-
---- PROMPT START ---
-[TRAINING/FINAL] ASSESSMENT REPORT
-
-[Generated report content]
-
-(Do not mention scores. Also do not mention that the score is hidden. Do not mention "remove all scores and numerical references" or similar things. Do not mention anything like "align with your requirements" You should process as if there were no score.)
---- PROMPT END ---
-
-
-----------------------------------------------------------
-7. Greeting Messages
-----------------------------------------------------------
-File: app/composables/eegc/promptAndEssay.js (lines 290-306)
-Used in: app/constants/eegcModes.ts
+4. GREETING MESSAGES
 
 Training Mode Greeting:
 "Welcome to the training mode of AI assistant. In this session, you are expected to revise the thesis statement to ensure it includes two main points that address the essay question. Can you first locate the thesis statement in the draft?"
 
 Assessment Mode Greeting:
-"Hi there! I'm your English writing coach, here to help you strengthen your essay through clear, focused revision. Before we dive in, we'll take a moment to set some goals together. [Explains the session workflow: negotiate targets, diagnosis, priority selection, then 3-step revision]"
+"Hi there! I'm your English writing coach, here to help you strengthen your essay through clear, focused revision. Before we dive in, we'll take a moment to set some goals together.
 
-Briefing Mode Greeting:
-"Welcome to LANG 0036! Configure your API to start."
+Here's how our session will work:
+Negotiate your targets - We'll start by discussing what you want to improve most in your essay.
+Get a quick diagnosis - I'll give you feedback on your essay based on key writing rubrics (like thesis, organization, evidence, and language).
+Choose what to focus on - You'll decide which issues you'd like to work on first.
+Then we'll move through a structured, three-step revision process:
+Step 1: Revise your thesis statement.
+Step 2: Choose one body paragraph and refine its topic sentence.
+Step 3: Revise the rest of that paragraph for clarity and coherence.
+My role is to guide you with questions, feedback, and examples - but you'll always lead the revisions yourself."
 
 
-----------------------------------------------------------
-8. Assessment Rubric (Rubric)
-----------------------------------------------------------
-File: app/composables/eegc/promptAndEssay.js (line 310)
-Used in: Reference rubric for the course assessment
+5. BULLET POINTS GENERATION PROMPT
 
---- RUBRIC START ---
+"Extract clear and concise 2 bullet points summarizing the latest four conversations, and return the result in Markdown. The bullet points should be relevant to essay improvement. Each bullet point should be one short sentence."
+
+
+6. ASSESSMENT RUBRIC
+
 Assessment Task: Writing (20%)
 Part 1: Point-of-view Essay (10%)
 
-Criteria: Content and Ideas (1-5 scale)
-Criteria: Organisation and Logical Progression (1-5 scale)
-Criteria: Vocabulary (1-5 scale)
-Criteria: Grammar and Sentence Structure (1-5 scale)
+Criteria: Content and Ideas
+1 (Limited): Ideas are irrelevant or minimally related to the topic. Lacks awareness of the issue concerned. No clear viewpoint.
+2 (Basic): Ideas are somewhat related but vague. Minimal awareness of the issue concerned. Viewpoint unclear.
+3 (Developing): Ideas are relevant but basic. Some awareness of the issue concerned. Viewpoint present but weakly developed.
+4 (Proficient): Ideas are relevant and solid. Good awareness of the issue concerned. Clear viewpoint with some depth.
+5 (Excellent): Ideas are insightful and highly relevant. Strong awareness of the issue concerned. Well-developed, compelling viewpoint.
+
+Criteria: Organisation and Logical Progression
+1 (Limited): No clear structure. Ideas are disjointed with no development or progression.
+2 (Basic): Basic structure with unclear paragraphing. Ideas are listed with little development.
+3 (Developing): Clear structure with some paragraphing. Ideas are developed but lack depth or logical flow.
+4 (Proficient): Well-organized with clear paragraphs. Ideas are developed logically with good flow and support.
+5 (Excellent): Highly organized with effective paragraphing. Ideas are thoroughly developed with seamless, logical progression.
+
+Criteria: Vocabulary
+1 (Limited): Vocabulary is limited, repetitive, or inaccurate. Lacks topic-specific terms.
+2 (Basic): Basic vocabulary with some repetition. Minimal use of topic-specific terms.
+3 (Developing): Adequate vocabulary with some variety. Includes some topic-specific terms but with occasional errors.
+4 (Proficient): Varied and precise vocabulary. Effective use of topic-specific terms. Minor errors.
+5 (Excellent): Rich, precise vocabulary. Masterful use of topic-specific terms. Almost error-free and sophisticated.
+
+Criteria: Grammar and Sentence Structure
+1 (Limited): Frequent grammatical and spelling errors. Sentences are incomplete or confusing.
+2 (Basic): Several grammatical and spelling errors. Sentences are simple and often flawed.
+3 (Developing): Some grammatical and spelling errors. Sentences are mostly correct but lack variety.
+4 (Proficient): Minor grammatical and spelling errors. Sentences are varied and mostly accurate.
+5 (Excellent): Virtually error-free grammar and spelling. Sentences are complex, varied, and accurately constructed.
 
 Part 2: AI-Assisted Review Skills (10%)
-A. In-Depth Conversation with AI (1-5 scale)
-B. Critical Review of AI Suggestions (1-5 scale)
-C. Refining Process (1-5 scale)
---- RUBRIC END ---
+A. In-Depth Conversation with AI
+1 (Limited): No exchanges or chat history; no questions asked.
+2 (Basic): Sparse conversation; one or two simple questions.
+3 (Developing): Adequate exchanges; some relevant questions.
+4 (Proficient): Robust interaction; detailed, relevant questions across levels.
+5 (Excellent): Extensive, well-documented chat history; insightful, multi-level questioning.
+
+B. Critical Review of AI Suggestions
+1 (Limited): All AI suggestions accepted blindly.
+2 (Basic): Most accepted; little analysis.
+3 (Developing): Some evaluated; partial justification.
+4 (Proficient): Most critically reviewed with clear justification.
+5 (Excellent): All evaluated thoroughly with strong, evidence-based reasoning.
+
+C. Refining Process
+1 (Limited): No revisions made.
+2 (Basic): Minimal revisions; no iteration.
+3 (Developing): Some revisions with limited iteration.
+4 (Proficient): Clear iterative process with multiple revisions.
+5 (Excellent): Extensive refinement with iterative improvements.
 
 
-----------------------------------------------------------
-9. Sample Essay (Sample_Essay)
-----------------------------------------------------------
-File: app/composables/eegc/promptAndEssay.js (line 1)
-Used in: Training mode as the practice essay
+7. SAMPLE ESSAY (Used in Training Mode)
 
-A climate change essay about individual vs government action, written at an intermediate level with deliberate errors for students to practice revising.
+Climate change is a very serious problem in the world today, and many people argue that the actions of individuals do not matter much compared to what governments and big companies can do. I partly agree with this idea because I believe citizens can still influence the government, which is very important, but at the same time, I also think that personal green lifestyle choices, while less impactful, still have a role to play.
 
+The most important way individuals can help fight climate change is by influencing the government and politicians. When many citizens demand better environmental laws, governments are more likely to act. For example, if people protest or vote for leaders who care about the environment, it can push the government to ban pollution or invest in clean energy. In some countries, people have joined together and forced their leaders to make new rules about plastic or cutting carbon emissions. This shows that public opinion and pressure from normal people can have a big effect, even if individuals alone do not have much power. But sometimes, the government maybe just listen a little and not really make strong action, so is not always working well. Also, sometimes people want change but they don't know how to tell the politicians, so nothing happen.
 
-==========================================================
-END OF PROMPTS REFERENCE
-==========================================================
+On the other hand, individuals can also make small changes in their own lives, like recycling, using less water, or choosing to walk instead of drive. These actions are not as powerful as government policies, but they still matter. If many people try to live in a greener way, it can create a good example for others and send a message to companies that customers want eco-friendly products. For instance, if lots of people buy from green companies, businesses will try to be more sustainable to make more profit. But also, sometimes people don't care and just want to do what is easy, so this is problem. Or maybe only a few people do green things but most people don't change, so it not really enough to help the climate problem.
+
+In conclusion, while individual actions alone may not solve climate change, they are not completely useless. The most important thing is that citizens can influence governments to make strong decisions for the environment. At the same time, personal green habits can also help, even if they are less effective. In my opinion, everyone - governments, companies, and individuals - needs to work together to fight this problem.
 `;
 
   const requests = [
     {
       insertText: {
-        location: { index: endIndex - 1 },
-        text: content,
-      },
-    },
+        location: { index: endIndex - 1, tabId: TAB_ID },
+        text: content
+      }
+    }
   ];
 
   await docs.documents.batchUpdate({
     documentId: DOC_ID,
-    requestBody: { requests },
+    requestBody: { requests }
   });
 
-  console.log('Prompts added to Google Doc successfully!');
+  console.log('All prompts added to tab', tab.tabProperties.title, 'successfully!');
 }
 
 run().catch(e => {
