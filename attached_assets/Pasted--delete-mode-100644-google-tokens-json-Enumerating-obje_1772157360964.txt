@@ -1,0 +1,44 @@
+
+ delete mode 100644 google_tokens.json
+Enumerating objects: 1401, done.
+Counting objects: 100% (1401/1401), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (1362/1362), done.
+Writing objects: 100% (1368/1368), 28.16 MiB | 5.87 MiB/s, done.
+Total 1368 (delta 195), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (195/195), completed with 15 local objects.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: 
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote: 
+remote:     - Push cannot contain secrets
+remote: 
+remote:     
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:     
+remote:     
+remote:       —— Google OAuth Access Token —————————————————————————
+remote:        locations:
+remote:          - commit: 5d97852c3a9fdb364fa7abc2791b10d37c59492d
+remote:            path: google_tokens.json:2
+remote:     
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/tesolchina/Eegc-Deploy2026/security/secret-scanning/unblock-secret/3AES5KEhbNXhrEL2AexjWK9jDcJ
+remote:     
+remote:     
+remote:       —— Google OAuth Refresh Token ————————————————————————
+remote:        locations:
+remote:          - commit: 5d97852c3a9fdb364fa7abc2791b10d37c59492d
+remote:            path: google_tokens.json:3
+remote:     
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/tesolchina/Eegc-Deploy2026/security/secret-scanning/unblock-secret/3AES5KwBpIBDZOZSRpdaZ63q9Ix
+remote:     
+remote: 
+remote: 
+To https://github.com/tesolchina/Eegc-Deploy2026.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/tesolchina/Eegc-Deploy2026.git'
