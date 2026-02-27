@@ -48,3 +48,6 @@ desktop.ini
 # Replit
 .replit-bin/
 .replit.lock
+
+# Secrets / tokens
+google_tokens.json
